@@ -13,3 +13,11 @@ Broadcast::channel('chat.{a}.{b}', function ($user, $a, $b) {
 
     return $a < $b && in_array($user->id, [$a, $b], true);
 });
+
+Broadcast::channel('tictactoe.{a}.{b}', function ($user, int $a, int $b) {
+    return $a !== $b && in_array($user->id, [$a, $b], true);
+});
+
+Broadcast::channel('memorymatch.{a}.{b}', function ($user, int $a, int $b) {
+    return $a !== $b && in_array($user->id, [$a, $b], true);
+});

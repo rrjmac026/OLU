@@ -28,6 +28,9 @@ const mainItems: Item[] = [
     { href: '/questions', label: 'Questions', icon: '❓' },
     { href: '/quiz', label: 'Couple quiz', icon: '💞' },
     { href: '/wheel', label: 'Random wheel', icon: '🎡' },
+    { href: '/games/tictactoe', label: 'Tic-tac-toe', icon: '⭕' },
+    { href: '/games/memorymatch', label: 'Memory match', icon: '🃏' },
+    { href: '/puzzle', label: 'Daily puzzle', icon: '🧩' },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 

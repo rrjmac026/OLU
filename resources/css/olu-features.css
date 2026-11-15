@@ -329,3 +329,64 @@ a.olu-btn {
 }
 .wheel-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
 .wheel-result { width: min(92vw, 420px); text-align: center; }
+
+/* Tic-tac-toe */
+.ttt { max-width: 360px; margin-inline: auto; text-align: center; }
+.ttt-status { font-size: 1.1rem; margin: .25rem 0; }
+.ttt-you { opacity: .7; margin: 0 0 1rem; }
+.ttt-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.ttt-cell {
+  aspect-ratio: 1;
+  font-size: 2rem;
+  font-weight: 600;
+  border-radius: .75rem;
+  border: 1px solid var(--olu-border, #ddd);
+  background: var(--olu-card, #fff);
+  color: inherit;
+  cursor: pointer;
+}
+.ttt-cell:disabled { cursor: default; }
+.ttt-cell:not(:disabled):hover { filter: brightness(.96); }
+.ttt-cell.win { outline: 2px solid currentColor; }
+/* Memory match */
+.mm { max-width: 420px; margin-inline: auto; text-align: center; }
+.mm-status { font-size: 1.1rem; margin: .25rem 0 1rem; }
+.mm-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.mm-card {
+  aspect-ratio: 1;
+  font-size: 1.8rem;
+  border-radius: .75rem;
+  border: 1px solid var(--olu-border, #ddd);
+  background: var(--olu-card, #fff);
+  color: inherit;
+  cursor: pointer;
+}
+.mm-card.hidden { opacity: .55; }
+.mm-card.hidden:hover { opacity: .8; }
+.mm-card.flipped { outline: 2px solid currentColor; }
+.mm-card.matched { opacity: 1; background: transparent; cursor: default; }
+.mm-card:disabled { cursor: default; }
+
+/* Daily puzzle */
+.puzzle { max-width: 520px; margin-inline: auto; }
+.puzzle-q { font-size: 1.15rem; margin: .5rem 0 1rem; }
+.puzzle-form { display: flex; gap: .5rem; }
+.puzzle-form .olu-input { flex: 1; }
+.puzzle-actions { display: flex; gap: .5rem; margin-top: .75rem; flex-wrap: wrap; }
+.puzzle-note { opacity: .75; margin: .5rem 0 0; font-size: .95rem; }
+.puzzle-result { font-size: 1.1rem; margin: 1rem 0 0; }
+.puzzle-admin { max-width: 520px; margin: 1rem auto 0; }
+.puzzle-admin-form { display: grid; gap: .5rem; margin-bottom: 1rem; }
+.puzzle-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
+.puzzle-list li { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; }
+.puzzle-list li.off { opacity: .5; }

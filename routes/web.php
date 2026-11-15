@@ -23,6 +23,9 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\WheelController;
+use App\Http\Controllers\TicTacToeController;
+use App\Http\Controllers\MemoryMatchController;
+use App\Http\Controllers\PuzzleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -169,5 +172,26 @@ Route::middleware('auth.session')->group(function () {
         Route::post('wheel/items', [WheelController::class, 'store']);
         Route::patch('wheel/items/{item}', [WheelController::class, 'toggle'])->whereNumber('item');
         Route::delete('wheel/items/{item}', [WheelController::class, 'destroy'])->whereNumber('item');
+    });
+
+    // Games
+    Route::get('/games/tictactoe', [TicTacToeController::class, 'index'])->name('games.tictactoe');
+    Route::post('/games/tictactoe', [TicTacToeController::class, 'store']);
+    Route::post('/games/tictactoe/{game}/move', [TicTacToeController::class, 'move'])->whereNumber('game');
+
+    
+
+    Route::get('/games/memorymatch', [MemoryMatchController::class, 'index'])->name('games.memorymatch');
+    Route::post('/games/memorymatch', [MemoryMatchController::class, 'store']);
+    Route::post('/games/memorymatch/{game}/flip', [MemoryMatchController::class, 'flip'])->whereNumber('game');
+
+    // Daily puzzle
+    Route::get('/puzzle', [PuzzleController::class, 'index'])->name('puzzle');
+    Route::post('/puzzle/guess', [PuzzleController::class, 'guess']);
+    Route::post('/puzzle/reveal', [PuzzleController::class, 'reveal']);
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/puzzle/items', [PuzzleController::class, 'store']);
+        Route::patch('/puzzle/items/{item}', [PuzzleController::class, 'toggle']);
+        Route::delete('/puzzle/items/{item}', [PuzzleController::class, 'destroy']);
     });
 });
