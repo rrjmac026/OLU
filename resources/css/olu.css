@@ -1,0 +1,204 @@
+:root {
+    --olu-bg: #fdf8f5;
+    --olu-card: #ffffff;
+    --olu-text: #2b2430;
+    --olu-muted: #7a6f80;
+    --olu-accent: #d96b8a;
+    --olu-border: #eadfe3;
+    --olu-danger: #c0392b;
+    --olu-radius: 10px;
+}
+
+.olu,
+.olu-guest {
+    min-height: 100vh;
+    background: var(--olu-bg);
+    color: var(--olu-text);
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+}
+
+.olu *,
+.olu-guest * {
+    box-sizing: border-box;
+}
+
+.olu a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.olu-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--olu-card);
+    border-bottom: 1px solid var(--olu-border);
+}
+
+.olu-nav nav {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+}
+
+.olu-brand {
+    font-weight: 700;
+    color: var(--olu-accent);
+}
+
+.olu-main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.olu-card {
+    background: var(--olu-card);
+    border: 1px solid var(--olu-border);
+    border-radius: var(--olu-radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.olu-card h2,
+.olu-card h3 {
+    margin-top: 0;
+}
+
+.olu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+}
+
+.olu-tile {
+    border: 1px dashed var(--olu-border);
+    border-radius: var(--olu-radius);
+    padding: 1rem;
+    color: var(--olu-muted);
+}
+
+.olu-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.olu-tabs a {
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--olu-border);
+    background: var(--olu-card);
+}
+
+.olu-tabs a.active {
+    background: var(--olu-accent);
+    border-color: var(--olu-accent);
+    color: #fff;
+}
+
+.olu-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.9rem;
+}
+
+.olu-field > span {
+    font-size: 0.85rem;
+    color: var(--olu-muted);
+}
+
+.olu input[type='text'],
+.olu input[type='email'],
+.olu input[type='password'],
+.olu input[type='date'],
+.olu select,
+.olu textarea,
+.olu-guest input {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--olu-border);
+    border-radius: 8px;
+    font: inherit;
+    background: #fff;
+    color: var(--olu-text);
+}
+
+.olu-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+}
+
+.olu-check small {
+    display: block;
+    color: var(--olu-muted);
+}
+
+.olu-btn {
+    padding: 0.5rem 1rem;
+    border: 0;
+    border-radius: 8px;
+    background: var(--olu-accent);
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.olu-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.olu-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--olu-muted);
+    cursor: pointer;
+}
+
+.olu-flash {
+    background: #eaf7ee;
+    border: 1px solid #bfe3c9;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.olu-error {
+    color: var(--olu-danger);
+}
+
+.olu-muted {
+    color: var(--olu-muted);
+}
+
+.olu-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.olu-table th,
+.olu-table td {
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--olu-border);
+}
+
+.olu-guest {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.olu-guest .olu-card {
+    width: 100%;
+    max-width: 380px;
+}
