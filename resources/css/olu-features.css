@@ -1,0 +1,105 @@
+/* ---------- Shared bits ---------- */
+a.olu-btn {
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+}
+
+.olu-page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.olu-page-head h2 {
+    margin: 0;
+}
+
+.olu-prose {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.olu-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.olu-pager {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.olu-entry-link {
+    font-weight: 600;
+}
+
+/* ---------- Check-in ---------- */
+.olu-moods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.olu-mood {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    min-width: 76px;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--olu-border);
+    border-radius: var(--olu-radius);
+    background: var(--olu-card);
+    color: var(--olu-text);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.olu-mood span:first-child {
+    font-size: 1.5rem;
+}
+
+.olu-mood.selected {
+    border-color: var(--olu-accent);
+    background: #fdecf1;
+}
+
+.olu-badge {
+    display: inline-block;
+    padding: 0 0.5rem;
+    border: 1px solid var(--olu-border);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: var(--olu-muted);
+}
+
+.olu-entry {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--olu-border);
+}
+
+.olu-entry:last-child {
+    border-bottom: 0;
+}
+
+.olu-entry-mood {
+    font-size: 1.6rem;
+}
+
+.olu-entry-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.olu-entry-body p {
+    margin: 0.15rem 0 0;
+}

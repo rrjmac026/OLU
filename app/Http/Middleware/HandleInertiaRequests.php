@@ -31,6 +31,7 @@ class HandleInertiaRequests extends Middleware
                     'email' => $user->email,
                     'role' => $user->role->value,
                     'display_name' => $user->profile?->display_name,
+                    'theme' => $user->settings?->theme ?? 'system',
                 ] : null,
             ],
             'flash' => [

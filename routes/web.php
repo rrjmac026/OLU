@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JournalController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProfileController;
@@ -15,6 +17,12 @@ Route::post('login', [AuthController::class, 'store']);
 Route::middleware('auth.session')->group(function () {
     Route::get('/', HomeController::class)->name('home');
     Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
+
+    Route::get('checkins', [CheckinController::class, 'index'])->name('checkins.index');
+    Route::post('checkins', [CheckinController::class, 'store'])->name('checkins.store');
+    Route::delete('checkins/{checkin}', [CheckinController::class, 'destroy'])->name('checkins.destroy');
+
+    Route::resource('journal', JournalController::class)->parameters(['journal' => 'entry']);
 
     Route::prefix('settings')->group(function () {
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

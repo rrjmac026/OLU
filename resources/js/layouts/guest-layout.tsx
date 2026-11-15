@@ -1,4 +1,5 @@
 import '../../css/olu.css';
+import '../../css/olu-layout.css';
 import { Head } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 

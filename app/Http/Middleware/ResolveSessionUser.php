@@ -12,7 +12,7 @@ class ResolveSessionUser
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->hasSession() && $id = $request->session()->get('auth_user_id')) {
-            $user = User::with('profile')->find($id);
+            $user = User::with(['profile', 'settings'])->find($id);
 
             $valid = $user
                 && $user->is_active
