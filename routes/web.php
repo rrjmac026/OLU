@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\LetterController;
+use App\Http\Controllers\MemoryController;
+use App\Http\Controllers\MemoryPhotoController;
 
 
 Route::get('login', [AuthController::class, 'create'])->name('login');
@@ -79,4 +82,28 @@ Route::middleware('auth.session')->group(function () {
         ->parameters(['timeline' => 'moment'])
         ->except(['show']);
     Route::get('/reasons', [ContentController::class, 'reasons']);
+
+    Route::get('/letters', [LetterController::class, 'index']);
+
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/letters/create', [LetterController::class, 'create']);
+        Route::post('/letters', [LetterController::class, 'store']);
+        Route::get('/letters/{letter}/edit', [LetterController::class, 'edit']);
+        Route::put('/letters/{letter}', [LetterController::class, 'update']);
+        Route::delete('/letters/{letter}', [LetterController::class, 'destroy']);
+    });
+
+    Route::get('/letters/{letter}', [LetterController::class, 'show']);
+    Route::post('/letters/{letter}/open', [LetterController::class, 'open']);
+
+    
+
+    Route::get('/memories', [MemoryController::class, 'index']);
+    Route::get('/memories/create', [MemoryController::class, 'create']);
+    Route::post('/memories', [MemoryController::class, 'store']);
+    Route::get('/memories/photos/{photo}', [MemoryPhotoController::class, 'show'])->whereNumber('photo');
+    Route::get('/memories/{memory}', [MemoryController::class, 'show'])->whereNumber('memory');
+    Route::get('/memories/{memory}/edit', [MemoryController::class, 'edit'])->whereNumber('memory');
+    Route::put('/memories/{memory}', [MemoryController::class, 'update'])->whereNumber('memory');
+    Route::delete('/memories/{memory}', [MemoryController::class, 'destroy'])->whereNumber('memory');
 });

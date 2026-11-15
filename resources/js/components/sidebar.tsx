@@ -16,10 +16,12 @@ const mainItems: Item[] = [
     { href: '/checkins', label: 'Check-in', icon: '💭' },
     { href: '/journal', label: 'Journal', icon: '📖' },
     { href: '/chat', label: 'Chat', icon: '💬', dot: true },
+    { href: '/letters', label: 'Letters', icon: '💌' },
     { href: '/calendar', label: 'Calendar', icon: '📅' },
     { href: '/comfort', label: 'Comfort', icon: '🫶' },
     { href: '/timeline', label: 'Our timeline', icon: '🌌' },
     { href: '/reasons', label: 'Reasons', icon: '💗' },
+    { href: '/memories', label: 'Memories', icon: '📸' },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 
