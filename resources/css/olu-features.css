@@ -222,3 +222,62 @@ a.olu-btn {
 .memory-edit-grid { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 .memory-edit-photo { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; font-size: 0.8rem; }
 .memory-edit-photo img { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; }
+
+/* ---------- Bucket list & Music ---------- */
+.bucket-tabs { display: flex; gap: 0.5rem; margin: 1.25rem 0 0.75rem; flex-wrap: wrap; }
+.bucket-tabs button {
+    padding: 0.4rem 0.9rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--olu-border, #eee); background: var(--olu-card, #fff); color: inherit;
+}
+.bucket-tabs button.active { background: var(--olu-accent, #e879a8); color: #fff; border-color: transparent; }
+.bucket-list, .song-list { display: grid; gap: 0.6rem; }
+.bucket-item, .song-card {
+    display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.8rem 1rem;
+    border-radius: 14px; background: var(--olu-card, #fff); border: 1px solid var(--olu-border, #eee);
+}
+.bucket-item.is-done .bucket-text strong { text-decoration: line-through; opacity: 0.6; }
+.bucket-check { background: none; border: none; font-size: 1.4rem; cursor: pointer; padding: 0; }
+.bucket-text, .song-text { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
+.bucket-sub, .song-sub { font-size: 0.82rem; opacity: 0.7; }
+.bucket-remove { background: none; border: none; cursor: pointer; opacity: 0.5; color: inherit; }
+.bucket-remove:hover { opacity: 1; }
+.song-icon { font-size: 1.5rem; }
+.song-note { margin: 0.25rem 0; font-style: italic; }
+
+/* ---------- Landing page ---------- */
+.landing {
+    position: relative; min-height: 100vh; display: grid; place-items: center; padding: 1.5rem;
+    background-color: #2a1f3d;
+    background-image: radial-gradient(circle at 20% 20%, #6d4aa8 0%, transparent 55%),
+                      radial-gradient(circle at 80% 80%, #e879a8 0%, transparent 50%);
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+}
+.landing-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.5)); }
+.landing-card {
+    position: relative; z-index: 1; text-align: center; color: #fff; max-width: 420px; width: 100%;
+    padding: 2.5rem 2rem; border-radius: 24px;
+    background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.landing-card h1 { margin: 0 0 0.5rem; font-size: 2rem; }
+.landing-card p { margin: 0 0 1.5rem; opacity: 0.9; }
+.landing-login {
+    display: inline-block; padding: 0.7rem 2.2rem; border-radius: 999px; text-decoration: none;
+    background: #fff; color: #3b2a55; font-weight: 600;
+}
+.landing-login:hover { transform: translateY(-1px); }
+
+/* ---------- Background picker ---------- */
+.bg-hint { opacity: 0.75; max-width: 640px; }
+.bg-check { display: flex; gap: 0.5rem; align-items: center; margin: 0.5rem 0 1rem; }
+.bg-toolbar { margin: 1rem 0; }
+.bg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.bg-tile {
+    overflow: hidden; border-radius: 14px; border: 2px solid var(--olu-border, #eee);
+    background: var(--olu-card, #fff);
+}
+.bg-tile.is-active { border-color: var(--olu-accent, #e879a8); }
+.bg-tile img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+.bg-tile-body { padding: 0.6rem 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.bg-sub { font-size: 0.8rem; opacity: 0.7; }
+.bg-actions { display: flex; justify-content: space-between; align-items: center; }

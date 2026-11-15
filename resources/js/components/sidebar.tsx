@@ -22,6 +22,9 @@ const mainItems: Item[] = [
     { href: '/timeline', label: 'Our timeline', icon: '🌌' },
     { href: '/reasons', label: 'Reasons', icon: '💗' },
     { href: '/memories', label: 'Memories', icon: '📸' },
+    { href: '/bucket', label: 'Bucket list', icon: '🎯' },
+    { href: '/music', label: 'Music', icon: '🎵' },
+    { href: '/backgrounds', label: 'Backgrounds', icon: '🖼️' },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 
