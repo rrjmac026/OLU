@@ -25,6 +25,8 @@ const mainItems: Item[] = [
     { href: '/bucket', label: 'Bucket list', icon: '🎯' },
     { href: '/music', label: 'Music', icon: '🎵' },
     { href: '/backgrounds', label: 'Backgrounds', icon: '🖼️' },
+    { href: '/questions', label: 'Questions', icon: '❓' },
+    { href: '/quiz', label: 'Couple quiz', icon: '💞' },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 

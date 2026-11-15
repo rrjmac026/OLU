@@ -12,9 +12,10 @@ type Props = {
     next_event: CalendarEvent | null;
     daily_compliment: string | null;
     daily_question: string | null;
+    question_answered: boolean;
 };
 
-export default function Home({ checkin_today, next_event, daily_compliment, daily_question }: Props) {
+export default function Home({ checkin_today, next_event, daily_compliment, daily_question, question_answered }: Props) {
     const { auth } = usePage<SharedProps>().props;
     const name = auth.user?.display_name ?? auth.user?.name ?? '';
 
@@ -58,6 +59,9 @@ export default function Home({ checkin_today, next_event, daily_compliment, dail
                 <div className="olu-card">
                     <strong>Question of the day</strong>
                     <p>{daily_question}</p>
+                    <Link href="/questions" className="olu-linkbtn">
+                        {question_answered ? 'View your answer' : 'Answer it'}
+                    </Link>
                 </div>
             )}
 
@@ -83,7 +87,9 @@ export default function Home({ checkin_today, next_event, daily_compliment, dail
                 <Link href="/comfort" className="olu-tile">
                     🫶 Comfort corner
                 </Link>
-                <div className="olu-tile">Playroom (soon)</div>
+                <Link href="/quiz" className="olu-tile">
+                    🎮 Couple quiz
+                </Link>
                 <div className="olu-tile">Inbox (soon)</div>
                 <div className="olu-tile">Garden (soon)</div>
             </div>

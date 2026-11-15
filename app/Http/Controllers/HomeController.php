@@ -9,6 +9,7 @@ use App\Models\DailyCheckin;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\DailyAnswer;
 use Inertia\Response;
 
 class HomeController extends Controller
@@ -42,6 +43,8 @@ class HomeController extends Controller
             ] : null,
             'daily_compliment' => ContentItem::dailyPick(ContentKind::Compliment, $today),
             'daily_question' => ContentItem::dailyPick(ContentKind::Question, $today),
+            'question_answered' => DailyAnswer::ownedBy($user)->whereDate('question_date', $today)->exists(),
+            
         ]);
     }
 }

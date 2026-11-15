@@ -20,6 +20,8 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SongController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -147,4 +149,16 @@ Route::middleware('auth.session')->group(function () {
             Route::delete('{item}', [AdminContentController::class, 'destroy']);
         });
     });
+
+    // ----- Shared daily questions -----
+    Route::get('questions', [QuestionController::class, 'index']);
+    Route::post('questions', [QuestionController::class, 'store']);
+    Route::delete('questions/{answer}', [QuestionController::class, 'destroy'])->whereNumber('answer');
+
+    // ----- Playroom: couple quiz -----
+    Route::get('quiz', [QuizController::class, 'index']);
+    Route::post('quiz/questions', [QuizController::class, 'storeQuestion']);
+    Route::delete('quiz/questions/{question}', [QuizController::class, 'destroyQuestion'])->whereNumber('question');
+    Route::post('quiz/questions/{question}/guess', [QuizController::class, 'guess'])->whereNumber('question');
+    Route::post('quiz/reset', [QuizController::class, 'reset']);
 });

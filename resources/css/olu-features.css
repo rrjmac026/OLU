@@ -281,3 +281,39 @@ a.olu-btn {
 .bg-tile-body { padding: 0.6rem 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; }
 .bg-sub { font-size: 0.8rem; opacity: 0.7; }
 .bg-actions { display: flex; justify-content: space-between; align-items: center; }
+
+/* ---------- Daily questions ---------- */
+.qa-question { font-size: 1.1rem; font-weight: 600; margin: 0.25rem 0 1rem; }
+.qa-date { font-size: 0.8rem; opacity: 0.65; }
+.qa-hint { opacity: 0.7; font-size: 0.9rem; }
+.qa-history { display: grid; gap: 1rem; }
+.qa-block { padding: 0.6rem 0.8rem; border-radius: 10px; background: rgba(0, 0, 0, 0.03); margin-top: 0.5rem; }
+.qa-block-head { display: flex; align-items: center; gap: 0.6rem; }
+.qa-badge { font-size: 0.78rem; opacity: 0.7; flex: 1; }
+.qa-text { white-space: pre-wrap; line-height: 1.6; margin: 0.4rem 0 0; }
+.qa-theirs { border-left: 3px solid var(--olu-accent, #e879a8); }
+
+/* ---------- Couple quiz ---------- */
+.quiz-list { display: grid; gap: 1rem; }
+.quiz-about { font-size: 0.8rem; opacity: 0.65; }
+.quiz-summary {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+    margin-bottom: 1rem; padding: 0.7rem 1rem; border-radius: 14px;
+    background: var(--olu-card, #fff); border: 1px solid var(--olu-border, #eee);
+}
+.quiz-options { display: grid; gap: 0.5rem; }
+.quiz-option {
+    text-align: left; padding: 0.7rem 1rem; border-radius: 12px; cursor: pointer; color: inherit;
+    border: 1px solid var(--olu-border, #ddd); background: var(--olu-card, #fff);
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--olu-accent, #e879a8); }
+.quiz-option:disabled { cursor: default; }
+.quiz-option.is-correct { border-color: #4caf50; background: rgba(76, 175, 80, 0.12); }
+.quiz-option.is-missed { border-color: var(--olu-accent, #e879a8); background: rgba(232, 121, 168, 0.12); }
+.quiz-result { margin: 0.75rem 0 0; font-size: 0.9rem; }
+.quiz-form-options { display: grid; gap: 0.5rem; }
+.quiz-form-option { display: flex; align-items: center; gap: 0.6rem; }
+.quiz-form-option input[type='text'] { flex: 1; }
+.quiz-mine-head { display: flex; justify-content: space-between; gap: 0.5rem; }
+.quiz-mine-options { margin: 0; padding-left: 1.2rem; line-height: 1.7; }
+.is-correct-text { font-weight: 600; }
