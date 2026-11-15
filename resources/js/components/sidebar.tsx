@@ -16,10 +16,15 @@ const mainItems: Item[] = [
     { href: '/checkins', label: 'Check-in', icon: '💭' },
     { href: '/journal', label: 'Journal', icon: '📖' },
     { href: '/chat', label: 'Chat', icon: '💬', dot: true },
+    { href: '/calendar', label: 'Calendar', icon: '📅' },
+    { href: '/comfort', label: 'Comfort', icon: '🫶' },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 
-const adminItems: Item[] = [{ href: '/admin/users', label: 'Users', icon: '👥' }];
+const adminItems: Item[] = [
+    { href: '/admin/users', label: 'Users', icon: '👥' },
+    { href: '/admin/content', label: 'Content', icon: '🗂️' },
+];
 
 type Props = {
     open: boolean;

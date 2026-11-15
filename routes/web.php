@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ContentController as AdminContentController;
+use App\Http\Controllers\ContentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\HomeController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CalendarController;
 
 
 Route::get('login', [AuthController::class, 'create'])->name('login');
@@ -46,6 +49,15 @@ Route::middleware('auth.session')->group(function () {
         Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
     });
 
+    Route::get('/comfort', [ContentController::class, 'comfort']);
+    Route::get('/content/random/{kind}', [ContentController::class, 'random']);
+
+    Route::middleware('role:admin')->prefix('admin/content')->group(function () {
+        Route::get('/', [AdminContentController::class, 'index']);
+        Route::post('/', [AdminContentController::class, 'store']);
+        Route::patch('/{item}', [AdminContentController::class, 'update']);
+        Route::delete('/{item}', [AdminContentController::class, 'destroy']);
+    });
         // inside the auth.session group:
     Route::get('/chat', [ChatController::class, 'index']);
     Route::get('/chat/status', [ChatController::class, 'status']);
@@ -55,4 +67,10 @@ Route::middleware('auth.session')->group(function () {
     Route::patch('/chat/messages/{message}', [ChatController::class, 'update']);
     Route::delete('/chat/messages/{message}', [ChatController::class, 'unsend']);
     Route::post('/chat/messages/{message}/remove', [ChatController::class, 'remove']);
+
+
+
+    Route::resource('calendar', CalendarController::class)
+        ->parameters(['calendar' => 'event'])
+        ->except(['show']);
 });
