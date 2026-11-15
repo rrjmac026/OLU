@@ -1,0 +1,253 @@
+# Our Little Universe: Progress
+
+_Last updated: 2026-11-16_
+
+A private couple website: one **admin** manages the space, one **user** gets a cozy place to check in, write, and (soon) chat, play and collect memories.
+
+## Stack
+
+| Layer | Choice |
+|---|---|
+| Backend | Laravel 13 (PHP 8.3+), MySQL |
+| Frontend | React 19 + TypeScript (`.tsx`) via **Inertia 3** (pages live inside Laravel in `resources/js`) |
+| Auth | **Custom session auth** (no Fortify, no Sanctum, no Laravel `Auth` guard) |
+| Styling | Plain CSS with variables (`resources/css/olu*.css`), minimal on purpose; real design comes later |
+| Realtime (planned) | Laravel Reverb + Laravel Echo (pure Laravel, no Node server) |
+
+The project began from the Laravel React starter kit. Its starter tooling (Vite, Wayfinder, etc.) is left untouched. Fortify was not present in this install, so nothing had to be removed.
+
+## Core design rules (from the concept doc)
+
+- **Private by default.** Check-ins and journal entries carry a `visibility` of `private` or `shared`.
+- **No admin bypass.** The admin sees only what she marks as shared.
+- **Enforced in the backend.** Every query is scoped to the owner (`ownedBy` scopes). Non-owners get a 404, so existence is never revealed.
+- **No pressure.** No streaks, no missed-day messaging, and gamification can be switched off in settings.
+- **Safe notifications.** Previews default to off.
+
+## Status
+
+| Phase / slice | Status |
+|---|---|
+| Phase 1: Foundation (auth, roles, profile, settings, privacy, admin users) | ✅ Done |
+| Layout: sidebar, profile dropdown, dark mode | ✅ Done |
+| Slice 1: Daily check-in | ✅ Done |
+| Slice 2: Journal with per-entry sharing | ✅ Done |
+| Slice 3: Messages (realtime messenger-style chat on Reverb) | ✅ Done |
+| Slice 4: Calendar and special dates (yearly repeats, Home countdown tile) | ✅ Done |
+| Slice 5: Admin content manager (daily questions, compliments, comfort messages) | ✅ Done |
+| Phases 3 to 6: Relationship space, Playroom, Living world, Polish | ⬜ |
+
+## How to run locally
+
+```powershell
+composer install
+npm install
+php artisan migrate --seed
+php artisan serve        # terminal 1
+npm run dev              # terminal 2
+```
+
+`.env` additions used by the seeder (creates the admin account):
+```
+ADMIN_NAME="Cap"
+ADMIN_EMAIL=you@example.com
+ADMIN_PASSWORD=change-me-please
+```
+The partner account is created by the admin at **Admin → Users**. Planned extra process for chat: `php artisan reverb:start`.
+
+---
+
+## Routes (`routes/web.php`)
+
+| Method | URI | Controller | Notes |
+|---|---|---|---|
+| GET / POST | `/login` | `AuthController@create / store` | Guest |
+| GET | `/` | `HomeController` | Home dashboard |
+| POST | `/logout` | `AuthController@destroy` | |
+| GET / POST | `/checkins` | `CheckinController@index / store` | One per day; saving again updates today's |
+| DELETE | `/checkins/{checkin}` | `CheckinController@destroy` | Owner only |
+| resource | `/journal` (param `entry`) | `JournalController` | index, create, store, show, edit, update, destroy |
+| GET / PATCH | `/settings/profile` | `ProfileController@edit / update` | |
+| GET / PATCH | `/settings/preferences` | `SettingsController@edit / update` | Theme, notifications, gamification |
+| GET / PATCH | `/settings/privacy` | `PrivacyController@edit / update` | |
+| GET / PUT | `/settings/password` | `PasswordController@edit / update` | |
+| GET / POST / PATCH | `/admin/users[/{user}]` | `Admin\UserController` | `role:admin` only |
+
+All routes except login sit behind the `auth.session` middleware.
+
+---
+
+## Backend files
+
+### Enums (`app/Enums`)
+| File | Purpose |
+|---|---|
+| `Role.php` | `admin`, `user`. Cast on `User.role`. |
+| `Visibility.php` | `private`, `shared`. Used on check-ins, journal entries and the default-visibility privacy setting. |
+| `Mood.php` | `happy, loved, excited, calm, okay, tired, sad, anxious, stressed`. Validated on check-ins. |
+| `JournalType.php` | `diary`, `dream`. |
+
+### Migrations (`database/migrations`)
+Fixed filenames, so the order is stable.
+
+| File | Creates |
+|---|---|
+| `2026_11_16_000001_create_users_table` | `users`: name, unique email, password, `role`, `is_active`, `last_login_at` |
+| `..._000002_create_profiles_table` | `profiles`: one per user. display_name, nickname, avatar_path, birthday, bio, timezone (default `UTC`) |
+| `..._000003_create_user_settings_table` | `user_settings`: theme, notifications_enabled, `notification_previews` (default off), `gamification_enabled` |
+| `..._000004_create_privacy_settings_table` | `privacy_settings`: `share_usage_summary` (default off), `default_entry_visibility` (default private) |
+| `..._000006_drop_api_tokens_table` | Drops the `api_tokens` table from the abandoned token-auth approach |
+| `..._000007_create_sessions_table` | `sessions` for database sessions (skips if the table already exists) |
+| `..._000008_create_daily_checkins_table` | `daily_checkins`: unique (`user_id`, `checkin_date`), mood, note, visibility |
+| `..._000009_create_journal_entries_table` | `journal_entries`: type, title, body, entry_date, visibility, with indexes for owner and shared lookups |
+
+`..._000005_create_api_tokens_table` was deleted during the move to Inertia and session auth.
+
+### Models (`app/Models`)
+| File | Key points |
+|---|---|
+| `User.php` | Role, `is_active` and hashed-password casts. `booted()` auto-creates a profile, settings and privacy row for every new user. `authStamp()` is a hash of the password stored in the session, so a password change signs out every other session. `isAdmin()`. Relations: `profile`, `settings`, `privacy`. |
+| `Profile.php` | Profile fields, `birthday` cast to date. |
+| `UserSetting.php` | Boolean casts for the three toggles. |
+| `PrivacySetting.php` | `default_entry_visibility` cast to the `Visibility` enum. |
+| `DailyCheckin.php` | `scopeOwnedBy`, `todayFor($user)` (today's date in the user's own timezone). |
+| `JournalEntry.php` | `scopeOwnedBy`, `scopeSharedWith($viewer)` (other people's shared entries), `canBeViewedBy($user)`, `todayFor($user)`. |
+
+### Middleware (`app/Http/Middleware`)
+| File | Alias | Purpose |
+|---|---|---|
+| `ResolveSessionUser.php` | (web group) | Reads `auth_user_id` and `auth_stamp` from the session, loads the user with profile and settings, and rejects inactive users or a stale stamp. Sets the request's user resolver. |
+| `RequireLogin.php` | `auth.session` | Redirects guests to `/login`. |
+| `EnsureRole.php` | `role` | `->middleware('role:admin')`. Returns 403 for other roles. |
+| `HandleInertiaRequests.php` | (web group) | Shares `auth.user` (id, name, email, role, display_name, theme), `flash.status` and the app name with every page. |
+
+### Controllers (`app/Http/Controllers`)
+| File | Methods |
+|---|---|
+| `AuthController.php` | `create` (login page), `store` (rate-limited to 5 tries per minute per email and IP, regenerates the session, stores `auth_user_id` and `auth_stamp`, sets `last_login_at`), `destroy` (invalidates the session) |
+| `HomeController.php` | `__invoke`: renders Home with today's mood, if any |
+| `PasswordController.php` | `edit`, `update` (verifies the current password, keeps this session alive, signs out all others) |
+| `ProfileController.php` | `edit`, `update` |
+| `SettingsController.php` | `edit`, `update` (also used by the dark mode toggle) |
+| `PrivacyController.php` | `edit` (settings plus the "who can see what" summary), `update` |
+| `CheckinController.php` | `index` (today's entry plus the last 60), `store` (`updateOrCreate` for today), `destroy` (owner only) |
+| `JournalController.php` | Full resource. `index` supports tabs: all, diary, dream, shared (with me). Private helpers: `ownedOrFail` (404 for non-owners) and `payload`. |
+| `Admin/UserController.php` | `index`, `store`, `update` (activate or deactivate, blocks self-deactivation). Never exposes anyone's private content. |
+
+### Form requests (`app/Http/Requests`)
+`Auth/LoginRequest`, `Auth/ChangePasswordRequest`, `UpdateProfileRequest`, `UpdateSettingsRequest`, `UpdatePrivacyRequest`, `Admin/StoreUserRequest`, `Admin/UpdateUserRequest`, `StoreCheckinRequest`, `StoreJournalEntryRequest` (used for both create and update).
+
+### Other backend files
+| File | Purpose |
+|---|---|
+| `bootstrap/app.php` | Registers web routes, appends `ResolveSessionUser` then `HandleInertiaRequests` to the web group, and defines the `auth.session` and `role` aliases. |
+| `routes/web.php` | All routes (table above). |
+| `app/Providers/AppServiceProvider.php` | Password defaults (min 10 characters). Also defines the `login` and `api` rate limiters, which are currently unused (login throttling lives in `AuthController`). |
+| `database/factories/UserFactory.php` | Test users, with an `admin()` state. |
+| `database/seeders/DatabaseSeeder.php` | Creates the admin from the `ADMIN_*` env vars. |
+
+### Deleted during the move to session auth
+`ApiToken` model, `AuthenticateToken` middleware, `routes/api.php`, the `api_tokens` migration, and the four JSON API Resources.
+
+---
+
+## Frontend files (`resources/`)
+
+### CSS (`resources/css`)
+| File | Purpose |
+|---|---|
+| `olu.css` | Base theme tokens (`--olu-*` variables), cards, forms, buttons, tables, tabs, flash messages. |
+| `olu-features.css` | Check-in mood picker, entry lists and badges, page header, pager, prose block. New features add styles here. |
+| `olu-layout.css` | App shell, topbar, sidebar, mobile drawer, profile dropdown, and the **dark theme** (via `data-theme` or the OS setting). Imported last so it can override. |
+
+### Types and helpers (`resources/js`)
+| File | Purpose |
+|---|---|
+| `types/olu.ts` | `Theme`, `AuthUser`, `SharedProps`. |
+| `lib/moods.ts` | Mood list with emoji and labels, plus `moodInfo()`. |
+| `lib/format.ts` | `formatDate`, `journalIcon`, `journalLabel`. |
+
+### Layouts and components
+| File | Purpose |
+|---|---|
+| `layouts/app-layout.tsx` | Authenticated shell: topbar (☰ on mobile, brand, profile menu), sidebar, flash message, and applies the saved theme to `<html>`. |
+| `layouts/guest-layout.tsx` | Centered card for the login page. |
+| `components/sidebar.tsx` | Nav links (Home, Check-in, Journal, Settings, and Users for admins), active highlighting, mobile drawer. |
+| `components/profile-menu.tsx` | Avatar button and dropdown: dark mode toggle (saves to her `theme` preference) and Log out. Closes on outside click or Esc. |
+| `components/form-bits.tsx` | `Field` (label and error) and `Check` (checkbox with hint). |
+| `components/settings-tabs.tsx` | Profile, Preferences, Privacy and Password tabs. |
+| `components/journal-form.tsx` | Shared create and edit form for journal entries. |
+
+### Pages (`resources/js/pages`)
+| File | Purpose |
+|---|---|
+| `auth/login.tsx` | Login form. |
+| `home.tsx` | Greeting, today's mood tile, and placeholders for Playroom, Inbox and Garden. |
+| `checkins/index.tsx` | Mood picker, note, visibility, and the mood history list. |
+| `journal/index.tsx` | Tabs (All, Diary, Dreams, Shared with me), paginated list with snippets and badges. |
+| `journal/create.tsx`, `edit.tsx` | Wrap `journal-form`. |
+| `journal/show.tsx` | Read-only entry view. Edit and Delete appear only for the owner. |
+| `settings/profile.tsx`, `preferences.tsx`, `privacy.tsx`, `password.tsx` | Settings tabs. The privacy page also lists what the admin can and cannot see. |
+| `admin/users.tsx` | Account list, enable or disable, create account. |
+
+`pages/welcome.tsx` (from the starter kit) is no longer routed and can be deleted.
+
+---
+
+## Known notes
+
+- Her timezone defaults to `UTC`, so she should set the right one in Settings → Profile for "today" to be correct.
+- Theme can flash briefly on first paint. A tiny inline script in the root Blade view can fix that during polish.
+- Login throttling lives in `AuthController`, so the `login` limiter in `AppServiceProvider` can be removed.
+
+## Next up: Slice 3, realtime chat
+
+- Pure Laravel with **Reverb** and Echo, one private channel for the two participants.
+- Messenger-style bubbles, typing indicator, "Seen", edit, unsend, and remove-from-my-view.
+- A `messages` table with `sender_id`, `recipient_id`, `body`, `read_at`, `edited_at`, and per-side removal timestamps.
+- Unread dot (not a count) on the sidebar.
+- Echo's private-channel auth must be wired to our `ResolveSessionUser` middleware.
+- Scheduled messages and open-when letters move to the Phase 3 letters feature.
+
+---
+
+## Slice 3: Realtime chat (done)
+
+**Run extra:** `php artisan reverb:start --debug` (third terminal). Restart `npm run dev` after any `VITE_REVERB_*` change.
+
+**Routes** (all behind `auth.session`)
+
+| Method | URI | Action |
+|---|---|---|
+| GET | `/chat` | `ChatController@index` (page, marks partner's messages read) |
+| GET | `/chat/status` | `status` (channel name + unread flag, used by the sidebar dot) |
+| GET | `/chat/messages?before=` | `older` (pagination) |
+| POST | `/chat/messages` | `store` |
+| POST | `/chat/read` | `read` |
+| PATCH | `/chat/messages/{message}` | `update` (sender only) |
+| DELETE | `/chat/messages/{message}` | `unsend` (sender only, wipes the text) |
+| POST | `/chat/messages/{message}/remove` | `remove` (hide from my view only) |
+
+**Backend:** `messages` migration (`..._000010`), `Message` model (`between`, `visibleTo`, `toPayload`, `channelFor`), `ChatUpdated` event (`ShouldBroadcastNow`, so no queue worker; one event for sent/edited/unsent/read), `ChatController`, channel `chat.{a}.{b}` in `routes/channels.php` (only the two participants).
+
+**Frontend:** `lib/http.ts` (fetch + XSRF), `lib/echo.ts` (single shared Echo instance, reset on logout), `components/chat-dot.tsx` (unread dot in the sidebar), `pages/chat/index.tsx`. Chat styles are in `olu-features.css`.
+
+**Notes**
+- Partner = the other active user (assumes exactly two accounts).
+- Typing indicator uses Echo whispers (client events), nothing stored.
+- Echo must stay a single instance: recreating it from the sidebar and the page at the same time killed the subscription.
+
+---
+
+## Slice 4: Calendar (done)
+
+- Routes: `resource /calendar` (param `event`, no show). Owner edits; the other person sees only `shared` events; non-owners get 404.
+- Backend: `calendar_events` migration (`..._000011`), `EventType` enum, `CalendarEvent` model (`visibleTo`, `occurrenceInMonth`, `nextOccurrence`, yearly repeats, Feb 29 handled), `CalendarEventRequest`, `CalendarController`.
+- Frontend: `lib/calendar.ts`, `components/calendar-form.tsx`, `pages/calendar/{index,create,edit}.tsx`. Home shows the next special date tile (`HomeController` computes it in her timezone).
+
+## Slice 5: Admin content manager (done)
+
+- `content_items` (one table, `kind` = question | compliment | comfort, `body`, `is_active`), migration `..._000012`, `ContentKind` enum, `ContentItem` model (`dailyPick` = same pick all day, `randomBody`), `ContentSeeder` (starter content, run with `php artisan db:seed --class=ContentSeeder`).
+- Admin: `/admin/content` (tabs, add, edit, hide, delete), `role:admin` only, touches only this table.
+- Her side: Home shows the daily compliment ("Another one" button) and question of the day; `/comfort` page; JSON `GET /content/random/{kind}`.
+- Answering the daily question is not built yet (comes with the Phase 3 shared questions).

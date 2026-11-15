@@ -18,6 +18,8 @@ const mainItems: Item[] = [
     { href: '/chat', label: 'Chat', icon: '💬', dot: true },
     { href: '/calendar', label: 'Calendar', icon: '📅' },
     { href: '/comfort', label: 'Comfort', icon: '🫶' },
+    { href: '/timeline', label: 'Our timeline', icon: '🌌' },
+    { href: '/reasons', label: 'Reasons', icon: '💗' },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 

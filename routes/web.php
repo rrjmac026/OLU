@@ -14,6 +14,7 @@ use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\TimelineController;
 
 
 Route::get('login', [AuthController::class, 'create'])->name('login');
@@ -73,4 +74,9 @@ Route::middleware('auth.session')->group(function () {
     Route::resource('calendar', CalendarController::class)
         ->parameters(['calendar' => 'event'])
         ->except(['show']);
+
+    Route::resource('timeline', TimelineController::class)
+        ->parameters(['timeline' => 'moment'])
+        ->except(['show']);
+    Route::get('/reasons', [ContentController::class, 'reasons']);
 });

@@ -16,6 +16,18 @@ class ContentController extends Controller
         return Inertia::render('comfort/index');
     }
 
+    public function reasons(): Response
+    {
+        return Inertia::render('reasons/index', [
+            'reasons' => ContentItem::active()
+                ->ofKind(ContentKind::Reason)
+                ->latest('id')
+                ->get(['id', 'body'])
+                ->map(fn ($r) => ['id' => $r->id, 'body' => $r->body])
+                ->all(),
+        ]);
+    }
+
     public function random(Request $request, string $kind): JsonResponse
     {
         $kind = ContentKind::tryFrom($kind);
