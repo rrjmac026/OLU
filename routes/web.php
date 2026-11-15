@@ -22,6 +22,7 @@ use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\WheelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -161,4 +162,12 @@ Route::middleware('auth.session')->group(function () {
     Route::delete('quiz/questions/{question}', [QuizController::class, 'destroyQuestion'])->whereNumber('question');
     Route::post('quiz/questions/{question}/guess', [QuizController::class, 'guess'])->whereNumber('question');
     Route::post('quiz/reset', [QuizController::class, 'reset']);
+
+    // ----- Playroom: random wheel (admin edits items) -----
+    Route::get('wheel', [WheelController::class, 'index']);
+    Route::middleware('role:admin')->group(function () {
+        Route::post('wheel/items', [WheelController::class, 'store']);
+        Route::patch('wheel/items/{item}', [WheelController::class, 'toggle'])->whereNumber('item');
+        Route::delete('wheel/items/{item}', [WheelController::class, 'destroy'])->whereNumber('item');
+    });
 });

@@ -317,3 +317,15 @@ a.olu-btn {
 .quiz-mine-head { display: flex; justify-content: space-between; gap: 0.5rem; }
 .quiz-mine-options { margin: 0; padding-left: 1.2rem; line-height: 1.7; }
 .is-correct-text { font-weight: 600; }
+
+/* ---------- Random wheel ---------- */
+.wheel-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin: 1rem 0 2rem; }
+.wheel-box { position: relative; width: min(88vw, 380px); aspect-ratio: 1; }
+.wheel-svg { width: 100%; height: 100%; display: block; border-radius: 50%; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18); }
+.wheel-pointer {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    font-size: 1.6rem; z-index: 2; color: var(--olu-accent, #e879a8);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+.wheel-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+.wheel-result { width: min(92vw, 420px); text-align: center; }
