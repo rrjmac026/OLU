@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import type { SharedProps } from '../types/olu';
+import ChatDot from './chat-dot';
 
 type Item = {
     href: string;
@@ -7,12 +8,14 @@ type Item = {
     icon: string;
     exact?: boolean;
     match?: string;
+    dot?: boolean;
 };
 
 const mainItems: Item[] = [
     { href: '/', label: 'Home', icon: '🏠', exact: true },
     { href: '/checkins', label: 'Check-in', icon: '💭' },
     { href: '/journal', label: 'Journal', icon: '📖' },
+    { href: '/chat', label: 'Chat', icon: '💬', dot: true },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 
@@ -45,6 +48,7 @@ export default function Sidebar({ open, onNavigate }: Props) {
             >
                 <span>{item.icon}</span>
                 <span>{item.label}</span>
+                {item.dot && <ChatDot />}
             </Link>
         );
     }

@@ -10,6 +10,8 @@ use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
+
 
 Route::get('login', [AuthController::class, 'create'])->name('login');
 Route::post('login', [AuthController::class, 'store']);
@@ -43,4 +45,14 @@ Route::middleware('auth.session')->group(function () {
         Route::post('users', [AdminUserController::class, 'store'])->name('admin.users.store');
         Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
     });
+
+        // inside the auth.session group:
+    Route::get('/chat', [ChatController::class, 'index']);
+    Route::get('/chat/status', [ChatController::class, 'status']);
+    Route::get('/chat/messages', [ChatController::class, 'older']);
+    Route::post('/chat/messages', [ChatController::class, 'store']);
+    Route::post('/chat/read', [ChatController::class, 'read']);
+    Route::patch('/chat/messages/{message}', [ChatController::class, 'update']);
+    Route::delete('/chat/messages/{message}', [ChatController::class, 'unsend']);
+    Route::post('/chat/messages/{message}/remove', [ChatController::class, 'remove']);
 });
