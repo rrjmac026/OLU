@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import { Pencil } from 'lucide-react';
 import TimelineForm from '../../components/timeline-form';
 import AppLayout from '../../layouts/app-layout';
 import type { Moment } from '../../lib/timeline';
@@ -16,12 +17,24 @@ export default function TimelineEdit({ moment }: Props) {
 
     return (
         <AppLayout title="Edit moment">
-            <h1>Edit moment</h1>
-            <div className="olu-card">
+            <div className="tl narrow">
+                <section className="jr-hero">
+                    <div>
+                        <span className="home-pill">
+                            <Pencil size={16} aria-hidden="true" /> Timeline
+                        </span>
+                        <h1 className="jr-title">
+                            Edit <span>moment</span> <em aria-hidden="true">♡</em>
+                        </h1>
+                        <p className="home-sub">Change anything you like.</p>
+                    </div>
+                </section>
+
                 <TimelineForm
                     action={`/timeline/${moment.id}`}
                     method="patch"
-                    submitLabel="Save changes"
+                    submitLabel="Save changes ♡"
+                    onDelete={remove}
                     initial={{
                         title: moment.title,
                         story: moment.story ?? '',
@@ -29,11 +42,6 @@ export default function TimelineEdit({ moment }: Props) {
                         visibility: moment.visibility,
                     }}
                 />
-                <p>
-                    <button type="button" className="olu-btn" onClick={remove}>
-                        Delete moment
-                    </button>
-                </p>
             </div>
         </AppLayout>
     );

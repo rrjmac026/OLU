@@ -551,3 +551,51 @@
 .home-skip, .home-tool { background: none; color: var(--ou-text); text-decoration: none; display: grid; place-items: center; padding: 0; }
 .home-bar.seek { cursor: pointer; }
 .home-bar.seek > span { transition: width .25s linear; }
+
+/* ============ Timeline ============ */
+.tl { display: grid; gap: 1.2rem; width: 100%; }
+.tl.narrow { max-width: 860px; margin-inline: auto; }
+
+.tl-year { display: grid; gap: .9rem; }
+.tl-year-label {
+    justify-self: start; padding: .35rem 1.2rem; border-radius: 999px; font-size: 1.05rem; font-weight: 600;
+    background: var(--ou-accent-soft); color: var(--ou-accent); border: 1px solid var(--ou-border);
+}
+
+.tl-list {
+    position: relative; list-style: none; margin: 0 0 0 .6rem; padding: 0 0 0 1.8rem;
+    display: flex; flex-direction: column; gap: .9rem;
+}
+.tl-list::before {
+    content: ''; position: absolute; left: 0; top: .6rem; bottom: .6rem; width: 2px; border-radius: 2px;
+    background: linear-gradient(180deg, var(--ou-accent), transparent);
+    opacity: .55;
+}
+
+.tl-item { position: relative; }
+.tl-dot {
+    position: absolute; left: -1.8rem; top: 1.25rem; width: .9rem; height: .9rem; border-radius: 50%;
+    transform: translateX(-50%); background: var(--ou-accent);
+    box-shadow: 0 0 0 4px var(--ou-accent-soft), 0 0 14px var(--ou-accent);
+}
+
+.tl-card {
+    padding: 1rem 1.3rem 1.1rem; border-radius: 20px; background: var(--ou-card);
+    border: 1px solid var(--ou-border); transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.tl-card:hover { border-color: var(--ou-accent); transform: translateY(-2px); box-shadow: 0 14px 30px -20px var(--ou-accent); }
+.tl-card-top { display: flex; align-items: center; justify-content: space-between; gap: .8rem; flex-wrap: wrap; }
+.tl-date { font-size: .85rem; color: var(--ou-accent); }
+.tl-title { margin: .35rem 0 0; font-size: 1.2rem; font-weight: 500; overflow-wrap: anywhere; }
+.tl-story { margin: .5rem 0 0; color: var(--ou-muted); line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.tl-edit {
+    display: inline-flex; align-items: center; gap: .3rem; margin-top: .7rem;
+    font-size: .82rem; color: var(--ou-muted); text-decoration: none; transition: color .15s;
+}
+.tl-edit:hover { color: var(--ou-accent); }
+.tl-delete { margin-left: auto; }
+
+@media (max-width: 560px) {
+    .tl-list { padding-left: 1.4rem; }
+    .tl-dot { left: -1.4rem; }
+}

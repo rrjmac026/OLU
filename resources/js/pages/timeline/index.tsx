@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { Heart, Lock, Pencil, Plus, Users } from 'lucide-react';
 import AppLayout from '../../layouts/app-layout';
 import { prettyDate } from '../../lib/calendar';
 import type { Moment } from '../../lib/timeline';
@@ -22,43 +23,87 @@ export default function TimelineIndex({ moments }: Props) {
 
     return (
         <AppLayout title="Our timeline">
-            <div className="olu-cal-head">
-                <h1>Our timeline</h1>
-                <Link href="/timeline/create" className="olu-btn">
-                    + New moment
-                </Link>
-            </div>
-
-            {groups.length === 0 && (
-                <div className="olu-card">
-                    <p className="olu-muted">No moments yet. Add the first one, like the day it all started.</p>
-                </div>
-            )}
-
-            {groups.map((g) => (
-                <section key={g.year} className="olu-tl-year">
-                    <h2>{g.year}</h2>
-                    <ul className="olu-tl-list">
-                        {g.items.map((m) => (
-                            <li key={m.id} className="olu-tl-item">
-                                <div className="olu-tl-date">{prettyDate(m.date)}</div>
-                                <div className="olu-tl-title">{m.title}</div>
-                                {m.story && <div className="olu-tl-story">{m.story}</div>}
-                                <div className="olu-cal-sub">
-                                    {m.mine
-                                        ? m.visibility === 'shared'
-                                            ? 'shared'
-                                            : 'private'
-                                        : m.owner
-                                          ? `from ${m.owner}`
-                                          : ''}
-                                </div>
-                                {m.mine && <Link href={`/timeline/${m.id}/edit`}>Edit</Link>}
-                            </li>
-                        ))}
-                    </ul>
+            <div className="tl">
+                <section className="jr-hero">
+                    <div>
+                        <span className="home-pill">
+                            <Heart size={16} aria-hidden="true" /> Timeline
+                        </span>
+                        <h1 className="jr-title">
+                            Our <span>timeline</span> <em aria-hidden="true">♡</em>
+                        </h1>
+                        <p className="home-sub">Every little step of our story.</p>
+                    </div>
+                    <div className="me-hero-side">
+                        <div className="mu-stats">
+                            <div>
+                                <strong>{moments.length}</strong>
+                                <small>{moments.length === 1 ? 'moment' : 'moments'}</small>
+                            </div>
+                            <div>
+                                <strong>{groups.length}</strong>
+                                <small>{groups.length === 1 ? 'year' : 'years'}</small>
+                            </div>
+                        </div>
+                        <Link href="/timeline/create" className="home-btn jr-new">
+                            <Plus size={18} aria-hidden="true" /> New moment
+                        </Link>
+                    </div>
                 </section>
-            ))}
+
+                {groups.length === 0 && (
+                    <section className="home-panel">
+                        <div className="jr-empty">
+                            <span aria-hidden="true">🌌</span>
+                            <strong>No moments yet</strong>
+                            <small>Add the first one, like the day it all started.</small>
+                            <Link href="/timeline/create" className="home-btn">
+                                Add the first moment
+                            </Link>
+                        </div>
+                    </section>
+                )}
+
+                {groups.map((g) => (
+                    <section key={g.year} className="tl-year">
+                        <div className="tl-year-label">{g.year}</div>
+                        <ol className="tl-list">
+                            {g.items.map((m) => (
+                                <li key={m.id} className="tl-item">
+                                    <span className="tl-dot" aria-hidden="true" />
+                                    <article className="tl-card">
+                                        <div className="tl-card-top">
+                                            <span className="tl-date">{prettyDate(m.date)}</span>
+                                            {m.mine ? (
+                                                <span className="ci-chip jr-chip">
+                                                    {m.visibility === 'shared' ? (
+                                                        <>
+                                                            <Users size={11} aria-hidden="true" /> Shared
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Lock size={11} aria-hidden="true" /> Private
+                                                        </>
+                                                    )}
+                                                </span>
+                                            ) : (
+                                                m.owner && <span className="ci-chip">from {m.owner} ♡</span>
+                                            )}
+                                        </div>
+                                        <h3 className="tl-title">{m.title}</h3>
+                                        {m.story && <p className="tl-story">{m.story}</p>}
+                                        {m.mine && (
+                                            <Link href={`/timeline/${m.id}/edit`} className="tl-edit">
+                                                <Pencil size={13} aria-hidden="true" /> Edit
+                                            </Link>
+                                        )}
+                                    </article>
+                                </li>
+                            ))}
+                        </ol>
+                    </section>
+                ))}
+            </div>
         </AppLayout>
     );
 }
