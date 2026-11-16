@@ -65,6 +65,7 @@ function ChatBody({ meId, partner, channel, messages: initial, hasMore: initialH
   // clear the sidebar dot (server already marked everything read on page load)
   useEffect(() => {
     window.dispatchEvent(new Event('olu:chat-read'));
+    
   }, []);
 
   // realtime
@@ -222,8 +223,17 @@ function ChatBody({ meId, partner, channel, messages: initial, hasMore: initialH
   return (
     <div className="olu-chat">
       <div className="olu-chat-head">
-        <strong>{partner.name}</strong>
-        {partnerTyping && <span className="olu-typing" aria-live="polite">typing<i /><i /><i /></span>}
+        <span className="olu-chat-avatar">{partner.name.charAt(0).toUpperCase()}</span>
+        <div className="olu-chat-who">
+          <strong>{partner.name}</strong>
+          <small>
+            {partnerTyping ? (
+              <span className="olu-typing" aria-live="polite">typing<i /><i /><i /></span>
+            ) : (
+              'Our little chat ♡'
+            )}
+          </small>
+        </div>
       </div>
 
       <div className="olu-chat-list" ref={listRef} onScroll={onScroll}>

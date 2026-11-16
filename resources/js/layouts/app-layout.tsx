@@ -10,6 +10,7 @@ import QuickSearch from '../components/quick-search';
 import Sidebar from '../components/sidebar';
 import type { SharedProps } from '../types/olu';
 import { Bell } from 'lucide-react';
+import ChatBubble from '../components/chat-bubble';
 
 type Props = {
     title: string;
@@ -53,6 +54,7 @@ export default function AppLayout({ title, children }: Props) {
                         {children}
                     </main>
                 </div>
+                <ChatBubble />
             </div>
         </>
     );
