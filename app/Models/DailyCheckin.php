@@ -47,4 +47,10 @@ class DailyCheckin extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeSharedFrom(Builder $query, User $partner): Builder
+    {
+        return $query->where('user_id', $partner->id)
+            ->where('visibility', Visibility::Shared->value);
+    }
 }

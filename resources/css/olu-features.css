@@ -45,6 +45,7 @@ a.olu-btn {
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
+.ci-partner { grid-column: 1 / -1; }
 
 .olu-mood {
     display: flex;
