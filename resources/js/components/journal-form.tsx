@@ -1,6 +1,6 @@
 import { Link, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
-import { Field } from './form-bits';
+import { Lock, Users } from 'lucide-react';
 
 type Initial = {
     type: string;
@@ -28,55 +28,92 @@ export default function JournalForm({ initial, entryId }: Props) {
         }
     }
 
+    const isDream = form.data.type === 'dream';
+
     return (
-        <form className="olu-card" onSubmit={submit}>
-            <Field label="Type" error={form.errors.type}>
-                <select value={form.data.type} onChange={(e) => form.setData('type', e.target.value)}>
-                    <option value="diary">📖 Diary</option>
-                    <option value="dream">🌙 Dream</option>
-                </select>
-            </Field>
+        <form className="home-panel jr-form" onSubmit={submit}>
+            <div>
+                <label className="ci-label">Type</label>
+                <div className="ci-seg">
+                    <button
+                        type="button"
+                        className={form.data.type === 'diary' ? 'on' : ''}
+                        onClick={() => form.setData('type', 'diary')}
+                    >
+                        📖 Diary
+                    </button>
+                    <button
+                        type="button"
+                        className={isDream ? 'on' : ''}
+                        onClick={() => form.setData('type', 'dream')}
+                    >
+                        🌙 Dream
+                    </button>
+                </div>
+                {form.errors.type && <p className="olu-cal-error">{form.errors.type}</p>}
+            </div>
 
-            <Field label="Title (optional)" error={form.errors.title}>
-                <input
-                    type="text"
-                    maxLength={120}
-                    value={form.data.title}
-                    onChange={(e) => form.setData('title', e.target.value)}
-                />
-            </Field>
+            <div className="jr-two">
+                <div>
+                    <label className="ci-label">Title (optional)</label>
+                    <input
+                        type="text"
+                        maxLength={120}
+                        placeholder={isDream ? 'A strange dream…' : 'A little title'}
+                        value={form.data.title}
+                        onChange={(e) => form.setData('title', e.target.value)}
+                    />
+                    {form.errors.title && <p className="olu-cal-error">{form.errors.title}</p>}
+                </div>
+                <div>
+                    <label className="ci-label">Date</label>
+                    <input
+                        type="date"
+                        value={form.data.entry_date}
+                        onChange={(e) => form.setData('entry_date', e.target.value)}
+                    />
+                    {form.errors.entry_date && <p className="olu-cal-error">{form.errors.entry_date}</p>}
+                </div>
+            </div>
 
-            <Field label="Date" error={form.errors.entry_date}>
-                <input
-                    type="date"
-                    value={form.data.entry_date}
-                    onChange={(e) => form.setData('entry_date', e.target.value)}
-                />
-            </Field>
-
-            <Field label="Entry" error={form.errors.body}>
+            <div>
+                <label className="ci-label">Entry</label>
                 <textarea
+                    className="ci-note"
                     rows={12}
+                    placeholder={isDream ? 'What did you dream about?' : 'How was your day?'}
                     value={form.data.body}
                     onChange={(e) => form.setData('body', e.target.value)}
                 />
-            </Field>
+                {form.errors.body && <p className="olu-cal-error">{form.errors.body}</p>}
+            </div>
 
-            <Field label="Who can read this?" error={form.errors.visibility}>
-                <select
-                    value={form.data.visibility}
-                    onChange={(e) => form.setData('visibility', e.target.value as 'private' | 'shared')}
-                >
-                    <option value="private">Private: only I can read this</option>
-                    <option value="shared">Shared: my partner can read this</option>
-                </select>
-            </Field>
+            <div>
+                <label className="ci-label">Who can read this?</label>
+                <div className="ci-seg">
+                    <button
+                        type="button"
+                        className={form.data.visibility === 'private' ? 'on' : ''}
+                        onClick={() => form.setData('visibility', 'private')}
+                    >
+                        <Lock size={15} aria-hidden="true" /> Private
+                    </button>
+                    <button
+                        type="button"
+                        className={form.data.visibility === 'shared' ? 'on' : ''}
+                        onClick={() => form.setData('visibility', 'shared')}
+                    >
+                        <Users size={15} aria-hidden="true" /> Shared with my partner
+                    </button>
+                </div>
+                {form.errors.visibility && <p className="olu-cal-error">{form.errors.visibility}</p>}
+            </div>
 
-            <div className="olu-actions">
-                <button className="olu-btn" type="submit" disabled={form.processing}>
-                    Save entry
+            <div className="jr-actions">
+                <button className="home-btn" type="submit" disabled={form.processing}>
+                    {form.processing ? 'Saving…' : 'Save entry ♡'}
                 </button>
-                <Link href={entryId ? `/journal/${entryId}` : '/journal'} className="olu-muted">
+                <Link href={entryId ? `/journal/${entryId}` : '/journal'} className="jr-cancel">
                     Cancel
                 </Link>
             </div>

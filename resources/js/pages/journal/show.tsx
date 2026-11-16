@@ -1,4 +1,5 @@
 import { Link, router } from '@inertiajs/react';
+import { ArrowLeft, Lock, Pencil, Trash2, Users } from 'lucide-react';
 import AppLayout from '../../layouts/app-layout';
 import { formatDate, journalIcon, journalLabel } from '../../lib/format';
 
@@ -16,6 +17,8 @@ type Props = {
 };
 
 export default function JournalShow({ entry }: Props) {
+    const title = entry.title || `${journalLabel(entry.type)} entry`;
+
     function remove() {
         if (confirm('Delete this entry? This cannot be undone.')) {
             router.delete(`/journal/${entry.id}`);
@@ -23,35 +26,53 @@ export default function JournalShow({ entry }: Props) {
     }
 
     return (
-        <AppLayout title={entry.title || `${journalLabel(entry.type)} entry`}>
-            <div className="olu-card">
-                <h2>
-                    {journalIcon(entry.type)} {entry.title || `${journalLabel(entry.type)} entry`}
-                </h2>
-                <p className="olu-muted">
-                    {formatDate(entry.date)}{' '}
-                    {entry.is_own ? (
-                        <span className="olu-badge">{entry.visibility === 'shared' ? 'Shared' : 'Private'}</span>
-                    ) : (
-                        <span className="olu-badge">Shared by {entry.author}</span>
-                    )}
-                </p>
+        <AppLayout title={title}>
+            <div className="jr narrow">
+                <Link href="/journal" className="jr-back">
+                    <ArrowLeft size={16} aria-hidden="true" /> Back to journal
+                </Link>
 
-                <div className="olu-prose">{entry.body}</div>
+                <article className="home-panel jr-paper">
+                    <header className="jr-paper-head">
+                        <div className="jr-icon big" aria-hidden="true">
+                            {journalIcon(entry.type)}
+                        </div>
+                        <div>
+                            <h1 className="jr-paper-title">{title}</h1>
+                            <div className="jr-meta">
+                                <span>{formatDate(entry.date)}</span>
+                                {entry.is_own ? (
+                                    <span className="ci-chip jr-chip">
+                                        {entry.visibility === 'shared' ? (
+                                            <>
+                                                <Users size={11} aria-hidden="true" /> Shared
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Lock size={11} aria-hidden="true" /> Private
+                                            </>
+                                        )}
+                                    </span>
+                                ) : (
+                                    <span className="ci-chip">Shared by {entry.author}</span>
+                                )}
+                            </div>
+                        </div>
+                    </header>
 
-                <div className="olu-actions">
-                    <Link href="/journal" className="olu-muted">
-                        ← Back to journal
-                    </Link>
+                    <div className="olu-prose jr-body">{entry.body}</div>
+
                     {entry.is_own && (
-                        <>
-                            <Link href={`/journal/${entry.id}/edit`}>Edit</Link>
-                            <button type="button" className="olu-link" onClick={remove}>
-                                Delete
+                        <div className="jr-actions">
+                            <Link href={`/journal/${entry.id}/edit`} className="home-btn ghost">
+                                <Pencil size={15} aria-hidden="true" /> Edit
+                            </Link>
+                            <button type="button" className="jr-danger" onClick={remove}>
+                                <Trash2 size={15} aria-hidden="true" /> Delete
                             </button>
-                        </>
+                        </div>
                     )}
-                </div>
+                </article>
             </div>
         </AppLayout>
     );

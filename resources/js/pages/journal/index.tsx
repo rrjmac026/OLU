@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { BookOpen, ChevronRight, Lock, Plus, Users } from 'lucide-react';
 import AppLayout from '../../layouts/app-layout';
 import { formatDate, journalIcon, journalLabel } from '../../lib/format';
 
@@ -36,53 +37,101 @@ const tabs = [
 export default function JournalIndex({ entries, tab }: Props) {
     return (
         <AppLayout title="Journal">
-            <div className="olu-page-head">
-                <h2>Journal</h2>
-                <Link href="/journal/create" className="olu-btn">
-                    New entry
-                </Link>
-            </div>
-
-            <nav className="olu-tabs">
-                {tabs.map((t) => (
-                    <Link key={t.key} href={t.href} className={tab === t.key ? 'active' : ''}>
-                        {t.label}
-                    </Link>
-                ))}
-            </nav>
-
-            <div className="olu-card">
-                {entries.data.length === 0 && (
-                    <p className="olu-muted">
-                        {tab === 'shared' ? 'Nothing has been shared with you yet.' : 'No entries yet. Write one whenever you like.'}
-                    </p>
-                )}
-
-                {entries.data.map((entry) => (
-                    <div className="olu-entry" key={entry.id}>
-                        <div className="olu-entry-mood">{journalIcon(entry.type)}</div>
-                        <div className="olu-entry-body">
-                            <Link href={`/journal/${entry.id}`} className="olu-entry-link">
-                                {entry.title || `${journalLabel(entry.type)} entry`}
-                            </Link>{' '}
-                            <span className="olu-muted">{formatDate(entry.date)}</span>{' '}
-                            {entry.is_own ? (
-                                <span className="olu-badge">{entry.visibility === 'shared' ? 'Shared' : 'Private'}</span>
-                            ) : (
-                                <span className="olu-badge">From {entry.author}</span>
-                            )}
-                            <p className="olu-muted">{entry.snippet}</p>
-                        </div>
+            <div className="jr">
+                <section className="jr-hero">
+                    <div>
+                        <span className="home-pill">
+                            <BookOpen size={16} aria-hidden="true" /> Journal
+                        </span>
+                        <h1 className="jr-title">
+                            Our <span>journal</span> <em aria-hidden="true">♡</em>
+                        </h1>
+                        <p className="home-sub">Days, dreams and little thoughts worth keeping.</p>
                     </div>
-                ))}
-            </div>
+                    <Link href="/journal/create" className="home-btn jr-new">
+                        <Plus size={18} aria-hidden="true" /> New entry
+                    </Link>
+                </section>
 
-            {entries.last_page > 1 && (
-                <div className="olu-pager">
-                    {entries.prev_page_url ? <Link href={entries.prev_page_url}>← Newer</Link> : <span />}
-                    {entries.next_page_url ? <Link href={entries.next_page_url}>Older →</Link> : <span />}
-                </div>
-            )}
+                <nav className="jr-tabs" aria-label="Journal filter">
+                    {tabs.map((t) => (
+                        <Link key={t.key} href={t.href} className={tab === t.key ? 'active' : ''}>
+                            {t.label}
+                        </Link>
+                    ))}
+                </nav>
+
+                <section className="home-panel">
+                    {entries.data.length === 0 ? (
+                        <div className="jr-empty">
+                            <span aria-hidden="true">📖</span>
+                            <strong>Nothing here yet</strong>
+                            <small>
+                                {tab === 'shared'
+                                    ? 'Nothing has been shared with you yet.'
+                                    : 'No entries yet. Write one whenever you like.'}
+                            </small>
+                            {tab !== 'shared' && (
+                                <Link href="/journal/create" className="home-btn">
+                                    Write your first entry
+                                </Link>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="jr-list">
+                            {entries.data.map((entry) => (
+                                <Link key={entry.id} href={`/journal/${entry.id}`} className="jr-entry">
+                                    <div className="jr-icon" aria-hidden="true">
+                                        {journalIcon(entry.type)}
+                                    </div>
+                                    <div className="jr-entry-body">
+                                        <div className="jr-entry-top">
+                                            <strong>{entry.title || `${journalLabel(entry.type)} entry`}</strong>
+                                            {entry.is_own ? (
+                                                <span className="ci-chip jr-chip">
+                                                    {entry.visibility === 'shared' ? (
+                                                        <>
+                                                            <Users size={11} aria-hidden="true" /> Shared
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Lock size={11} aria-hidden="true" /> Private
+                                                        </>
+                                                    )}
+                                                </span>
+                                            ) : (
+                                                <span className="ci-chip">From {entry.author}</span>
+                                            )}
+                                        </div>
+                                        <small>{formatDate(entry.date)}</small>
+                                        <p>{entry.snippet}</p>
+                                    </div>
+                                    <ChevronRight className="home-chev" size={20} aria-hidden="true" />
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {entries.last_page > 1 && (
+                    <div className="jr-pager">
+                        {entries.prev_page_url ? (
+                            <Link href={entries.prev_page_url} className="home-btn ghost">
+                                ← Newer
+                            </Link>
+                        ) : (
+                            <span />
+                        )}
+                        {entries.next_page_url ? (
+                            <Link href={entries.next_page_url} className="home-btn ghost">
+                                Older →
+                            </Link>
+                        ) : (
+                            <span />
+                        )}
+                    </div>
+                )}
+            </div>
         </AppLayout>
     );
 }
