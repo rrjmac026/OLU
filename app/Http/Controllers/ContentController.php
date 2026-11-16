@@ -19,12 +19,7 @@ class ContentController extends Controller
     public function reasons(): Response
     {
         return Inertia::render('reasons/index', [
-            'reasons' => ContentItem::active()
-                ->ofKind(ContentKind::Reason)
-                ->latest('id')
-                ->get(['id', 'body'])
-                ->map(fn ($r) => ['id' => $r->id, 'body' => $r->body])
-                ->all(),
+            'total' => ContentItem::active()->ofKind(ContentKind::Reason)->count(),
         ]);
     }
 
@@ -39,4 +34,5 @@ class ContentController extends Controller
             'body' => ContentItem::randomBody($kind, is_string($exclude) ? $exclude : null),
         ]);
     }
+    
 }

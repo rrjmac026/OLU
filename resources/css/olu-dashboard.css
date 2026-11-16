@@ -599,3 +599,42 @@
     .tl-list { padding-left: 1.4rem; }
     .tl-dot { left: -1.4rem; }
 }
+
+/* ============ Reasons ============ */
+.rs { display: grid; gap: 1rem; width: 100%; }
+
+.rs-surprise { display: grid; justify-items: center; gap: 1.1rem; text-align: center; padding-bottom: 1.6rem; }
+.rs-surprise .home-panel-head { justify-self: stretch; border-bottom: 1px solid var(--ou-border); }
+.rs-quote {
+    width: min(100%, 640px); margin: .4rem 0 0; padding: 1.4rem 1.8rem; border-radius: 22px;
+    border: 1px solid var(--ou-border); background: var(--ou-card-2);
+    font-size: 1.25rem; font-style: italic; line-height: 1.6; color: var(--ou-muted);
+    overflow-wrap: anywhere;
+}
+.rs-quote.on {
+    color: var(--ou-text); border-color: var(--ou-accent); background: var(--ou-accent-soft);
+    box-shadow: 0 12px 30px -18px var(--ou-accent);
+    animation: rs-pop .35s ease;
+}
+.rs-quote.on::before { content: '“'; }
+.rs-quote.on::after { content: '”'; }
+@keyframes rs-pop { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: none; } }
+.rs-surprise .home-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.rs-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .9rem;
+}
+.rs-card {
+    display: flex; align-items: flex-start; gap: .9rem; padding: 1rem 1.2rem;
+    border-radius: 20px; background: var(--ou-card); border: 1px solid var(--ou-border);
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.rs-card:hover { border-color: var(--ou-accent); transform: translateY(-2px); box-shadow: 0 14px 30px -20px var(--ou-accent); }
+.rs-num {
+    display: grid; place-items: center; flex: none; min-width: 2.2rem; height: 2.2rem; padding: 0 .4rem;
+    border-radius: 50%; font-size: .85rem; font-weight: 600;
+    background: var(--ou-accent-soft); color: var(--ou-accent);
+}
+.rs-card p { margin: .25rem 0 0; line-height: 1.6; overflow-wrap: anywhere; }
+.rs-heading { margin: .4rem 0 0 .3rem; font-size: 1rem; font-weight: 500; color: var(--ou-muted); }
