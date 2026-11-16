@@ -1,46 +1,9 @@
 import { Link, usePage } from '@inertiajs/react';
+import { adminNavItems, navSections, settingsNavItem } from '../lib/nav';
+import type { NavItem } from '../lib/nav';
 import type { SharedProps } from '../types/olu';
 import ChatDot from './chat-dot';
-
-type Item = {
-    href: string;
-    label: string;
-    icon: string;
-    exact?: boolean;
-    match?: string;
-    matches?: string[];
-    dot?: boolean;
-};
-
-const mainItems: Item[] = [
-    { href: '/', label: 'Home', icon: '🏠', exact: true },
-    { href: '/checkins', label: 'Check-in', icon: '💭' },
-    { href: '/journal', label: 'Journal', icon: '📖' },
-    { href: '/chat', label: 'Chat', icon: '💬', dot: true },
-    { href: '/letters', label: 'Letters', icon: '💌' },
-    { href: '/calendar', label: 'Calendar', icon: '📅' },
-    { href: '/comfort', label: 'Comfort', icon: '🫶' },
-    { href: '/timeline', label: 'Our timeline', icon: '🌌' },
-    { href: '/reasons', label: 'Reasons', icon: '💗' },
-    { href: '/memories', label: 'Memories', icon: '📸' },
-    { href: '/bucket', label: 'Bucket list', icon: '🎯' },
-    { href: '/music', label: 'Music', icon: '🎵' },
-    { href: '/backgrounds', label: 'Backgrounds', icon: '🖼️' },
-    { href: '/questions', label: 'Questions', icon: '❓' },
-    { href: '/garden', label: 'Garden', icon: '🌷' },
-    {
-        href: '/playroom',
-        label: 'Playroom',
-        icon: '🎈',
-        matches: ['/playroom', '/quiz', '/wheel', '/games', '/puzzle', '/achievements'],
-    },
-    { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
-];
-
-const adminItems: Item[] = [
-    { href: '/admin/users', label: 'Users', icon: '👥' },
-    { href: '/admin/content', label: 'Content', icon: '🗂️' },
-];
+import { Infinity as Inf, Sparkle } from 'lucide-react';
 
 type Props = {
     open: boolean;
@@ -51,7 +14,7 @@ export default function Sidebar({ open, onNavigate }: Props) {
     const { url } = usePage();
     const { auth } = usePage<SharedProps>().props;
 
-    function isActive(item: Item) {
+    function isActive(item: NavItem) {
         if (item.exact) {
             return url === '/' || url.startsWith('/?');
         }
@@ -63,7 +26,9 @@ export default function Sidebar({ open, onNavigate }: Props) {
         return url.startsWith(item.match ?? item.href);
     }
 
-    function renderItem(item: Item) {
+    function renderItem(item: NavItem) {
+        const Icon = item.icon;
+
         return (
             <Link
                 key={item.href}
@@ -71,7 +36,9 @@ export default function Sidebar({ open, onNavigate }: Props) {
                 className={`olu-side-link ${isActive(item) ? 'active' : ''}`}
                 onClick={onNavigate}
             >
-                <span>{item.icon}</span>
+                <span className="olu-side-icon" aria-hidden="true">
+                    <Icon size={18} strokeWidth={2} />
+                </span>
                 <span>{item.label}</span>
                 {item.dot && <ChatDot />}
             </Link>
@@ -80,14 +47,29 @@ export default function Sidebar({ open, onNavigate }: Props) {
 
     return (
         <aside className={`olu-sidebar ${open ? 'open' : ''}`}>
+            <Link href="/" className="olu-side-brand" onClick={onNavigate}>
+                <Inf size={34} strokeWidth={1.6} />
+                <span>Our Little<br />Universe <Sparkle size={14} fill="currentColor" /></span>
+            </Link>
             <nav>
-                {mainItems.map(renderItem)}
+                {navSections.map((section, i) => (
+                    <div key={section.title ?? `section-${i}`} className="olu-side-group">
+                        {section.title && <div className="olu-side-section">{section.title}</div>}
+                        {section.items.map(renderItem)}
+                    </div>
+                ))}
+
                 {auth.user?.role === 'admin' && (
-                    <>
+                    <div className="olu-side-group">
                         <div className="olu-side-section">Admin</div>
-                        {adminItems.map(renderItem)}
-                    </>
+                        {adminNavItems.map(renderItem)}
+                    </div>
                 )}
+
+                <div className="olu-side-group olu-side-foot">
+                    {renderItem(settingsNavItem)}
+                    <div className="olu-side-love">Made with love ♡</div>
+                </div>
             </nav>
         </aside>
     );
