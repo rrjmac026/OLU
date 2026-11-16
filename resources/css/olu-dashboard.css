@@ -268,3 +268,110 @@
 .ms-dots { position: absolute; left: 0; right: 0; bottom: .45rem; display: flex; justify-content: center; gap: .3rem; z-index: 1; }
 .ms-dots button { width: .45rem; height: .45rem; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.5); cursor: pointer; }
 .ms-dots button.on { background: #fff; }
+
+/* ============ Music page ============ */
+.mu { display: grid; gap: 1rem; width: 100%; }
+
+.mu-hero {
+    display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center;
+    padding: 1.6rem 2.4rem; border-radius: 28px; border: 1px solid var(--ou-border);
+    background: var(--ou-hero); color: var(--ou-hero-text);
+}
+.mu-title { margin: .9rem 0 .15rem; font-size: clamp(2rem, 3.4vw, 2.9rem); font-weight: 700; line-height: 1.1; }
+.mu-title span, .mu-title em { color: var(--ou-hero-accent); }
+.mu-title em { font-style: normal; font-weight: 400; }
+.mu-stats {
+    display: flex; gap: 0; border-radius: 20px; background: var(--ou-glass);
+    border: 1px solid var(--ou-glass-border); backdrop-filter: blur(8px);
+}
+.mu-stats > div { display: flex; flex-direction: column; align-items: center; padding: 1rem 1.8rem; }
+.mu-stats > div + div { border-left: 1px solid var(--ou-glass-border); }
+.mu-stats strong { font-size: 2.2rem; font-weight: 600; line-height: 1; }
+.mu-stats small { margin-top: .3rem; opacity: .85; }
+
+.mu-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1rem; align-items: start; }
+.mu-grid .home-panel-head { border-bottom: 1px solid var(--ou-border); }
+.mu-count { padding: .05rem .7rem; border-radius: 999px; background: var(--ou-accent-soft); color: var(--ou-accent); font-size: .85rem; }
+
+/* form */
+.mu-form { display: grid; gap: 1rem; }
+.mu-form input:not([type='file']), .mu-form textarea { width: 100%; padding: .65rem 1rem; font: inherit; }
+.mu-form .ci-note { margin-bottom: 0; }
+.mu-form input:focus-visible, .mu-form textarea:focus-visible { outline: 0; border-color: var(--ou-accent); box-shadow: 0 0 0 3px var(--ou-accent-soft); }
+.mu-two { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.mu-submit { justify-self: start; padding: .65rem 1.8rem; }
+.mu-submit:disabled { opacity: .45; cursor: not-allowed; }
+
+.mu-file-input { display: none; }
+.mu-drop {
+    display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.2rem; cursor: pointer;
+    border-radius: 18px; border: 1.5px dashed var(--ou-border); background: var(--ou-card-2);
+    transition: border-color .15s, background .15s;
+}
+.mu-drop:hover, .mu-drop.drag { border-color: var(--ou-accent); background: var(--ou-accent-soft); }
+.mu-drop.has { border-style: solid; border-color: var(--ou-accent); }
+.mu-drop-icon {
+    display: grid; place-items: center; flex: none; width: 3rem; height: 3rem; border-radius: 50%;
+    background: var(--ou-accent); color: var(--ou-on-accent); box-shadow: 0 0 0 6px var(--ou-accent-soft);
+}
+.mu-drop-text { display: flex; flex-direction: column; gap: .15rem; min-width: 0; flex: 1; }
+.mu-drop-text strong { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mu-drop-text small { color: var(--ou-muted); }
+
+/* ---- playlist ---- */
+.mu-list {
+    display: flex; flex-direction: column; gap: .75rem; max-height: 38rem; overflow-y: auto;
+    padding-right: .2rem; scrollbar-width: thin; scrollbar-color: var(--ou-border) transparent;
+}
+
+.mu-song {
+    display: flex; align-items: center; gap: 1rem; padding: .9rem 1.1rem;
+    border-radius: 18px; background: var(--ou-card-2); border: 1px solid var(--ou-border);
+    transition: border-color .15s, background .15s, transform .15s;
+}
+.mu-song:hover { border-color: var(--ou-accent); transform: translateY(-1px); }
+.mu-song.active {
+    border-color: var(--ou-accent); background: var(--ou-accent-soft);
+    box-shadow: 0 8px 24px -14px var(--ou-accent);
+}
+
+.mu-play {
+    display: grid; place-items: center; flex: none; width: 3.2rem; height: 3.2rem; padding: 0;
+    border: 0; border-radius: 50%; cursor: pointer;
+    background: var(--ou-accent); color: var(--ou-on-accent);
+    box-shadow: 0 0 0 5px var(--ou-accent-soft); transition: transform .15s;
+}
+.mu-play:hover { transform: scale(1.07); }
+
+.mu-song-icon {
+    display: grid; place-items: center; flex: none; width: 3.2rem; height: 3.2rem;
+    border-radius: 50%; background: var(--ou-card); border: 1px solid var(--ou-border); font-size: 1.4rem;
+}
+
+.mu-song-body { display: flex; flex-direction: column; gap: .15rem; flex: 1; min-width: 0; }
+.mu-song-top { display: flex; align-items: center; gap: .55rem; }
+.mu-song-top strong { font-weight: 500; font-size: 1.05rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mu-song-body small { color: var(--ou-muted); }
+
+.mu-song-note {
+    margin: .35rem 0 .1rem; padding: .1rem 0 .1rem .75rem;
+    border-left: 2px solid var(--ou-accent); color: var(--ou-muted);
+    font-style: italic; line-height: 1.45; overflow-wrap: anywhere;
+}
+
+.mu-song .home-bar.seek { margin: .5rem 0 .2rem; height: 4px; }
+
+.mu-song-foot { display: flex; align-items: center; gap: .9rem; margin-top: .25rem; }
+.mu-song-foot a { display: inline-flex; align-items: center; gap: .25rem; font-size: .8rem; color: var(--ou-accent); text-decoration: none; }
+.mu-song-foot a:hover { text-decoration: underline; }
+
+.mu-ctrls { display: flex; align-items: center; gap: .35rem; }
+.mu-ctrl {
+    display: grid; place-items: center; width: 2.1rem; height: 2.1rem; padding: 0;
+    border: 0; border-radius: 50%; background: transparent; color: var(--ou-muted);
+    cursor: pointer; transition: background .15s, color .15s;
+}
+.mu-ctrl:hover:not(:disabled) { background: var(--ou-accent-soft); color: var(--ou-accent); }
+.mu-ctrl.on { background: var(--ou-accent-soft); color: var(--ou-accent); }
+.mu-ctrl:disabled { opacity: .35; cursor: not-allowed; }
+.mu-ctrls .mu-count { margin-left: .5rem; }

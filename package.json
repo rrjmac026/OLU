@@ -19,6 +19,7 @@
         "@vitejs/plugin-react": "^6.1.1",
         "clsx": "^2.1.1",
         "concurrently": "^10.0.3",
+        "jsmediatags": "^3.9.7",
         "laravel-vite-plugin": "^3.1",
         "lucide-react": "^1.73.0",
         "react": "^19.2.0",
