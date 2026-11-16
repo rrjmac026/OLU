@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\DailyAnswer;
 use Inertia\Response;
+use App\Models\MemoryPhoto;
 
 class HomeController extends Controller
 {
@@ -36,6 +37,20 @@ class HomeController extends Controller
             }
         }
 
+        $memoryPhotos = MemoryPhoto::with('memory')
+            ->latest()
+            ->limit(60)
+            ->get()
+            ->filter(fn ($p) => $p->memory && $p->memory->canBeViewedBy($request->user()))
+            ->take(12)
+            ->map(fn ($p) => [
+                'id' => $p->id,
+                'memory_id' => $p->memory_id,
+                'url' => url('/memories/photos/'.$p->id),
+                'title' => $p->memory->title,
+            ])
+            ->values();
+
         return Inertia::render('home', [
             'checkin_today' => $checkin ? ['mood' => $checkin->mood->value] : null,
             'next_event' => $next ? $next->toPayload($user, $nextDate) + [
@@ -44,6 +59,7 @@ class HomeController extends Controller
             'daily_compliment' => ContentItem::dailyPick(ContentKind::Compliment, $today),
             'daily_question' => ContentItem::dailyPick(ContentKind::Question, $today),
             'question_answered' => DailyAnswer::ownedBy($user)->whereDate('question_date', $today)->exists(),
+            'memory_photos' => $memoryPhotos,
             
         ]);
     }

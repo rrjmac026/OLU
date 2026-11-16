@@ -9,6 +9,8 @@ import { moodInfo } from '../lib/moods';
 import type { SharedProps } from '../types/olu';
 // imports
 import { Calendar, ChevronRight, Leaf, ListMusic, MoreHorizontal, Music, Play, SkipForward, Smile, Sparkle, Sparkles, Star, Volume2 } from 'lucide-react';
+import MemorySlideshow from '../components/memory-slideshow';
+import type { MemorySlide } from '../components/memory-slideshow';
 
 type Props = {
     checkin_today: { mood: string } | null;
@@ -18,6 +20,7 @@ type Props = {
     question_answered: boolean;
     bucket?: { done: number; total: number } | null;
     current_song?: { title: string; artist?: string | null } | null;
+    memory_photos?: MemorySlide[];
 };
 
 export default function Home({
@@ -28,6 +31,7 @@ export default function Home({
     question_answered,
     bucket = null,
     current_song = null,
+    memory_photos = [],
 }: Props) {
     const { auth } = usePage<SharedProps>().props;
     const name = auth.user?.display_name ?? auth.user?.name ?? '';
@@ -41,6 +45,7 @@ export default function Home({
     const bucketPct = bucket && bucket.total > 0 ? Math.round((bucket.done / bucket.total) * 100) : 0;
 
     const [compliment, setCompliment] = useState(daily_compliment);
+    
 
     async function another() {
         try {
@@ -148,16 +153,7 @@ export default function Home({
                             <h2><Sparkle size={18} fill="currentColor" aria-hidden="true" /> A Little Memory</h2>
                             <Link href="/memories">See all →</Link>
                         </div>
-                        <div className="home-memory">
-                            <div className="home-memory-box" aria-hidden="true"><Sparkle size={40} strokeWidth={1.3} /></div>
-                            <div className="home-memory-text">
-                                <strong>One of my favorite days ♡</strong>
-                                <p>Some moments deserve to be remembered forever.</p>
-                                <Link href="/memories" className="home-btn ghost">
-                                    View Memory →
-                                </Link>
-                            </div>
-                        </div>
+                        <MemorySlideshow slides={memory_photos} />
                     </div>
 
                     <div className="home-panel">
