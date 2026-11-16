@@ -8,7 +8,7 @@ import { api } from '../lib/http';
 import { moodInfo } from '../lib/moods';
 import type { SharedProps } from '../types/olu';
 // imports
-import { Calendar, ChevronRight, Leaf, ListMusic, MoreHorizontal, Music, Play, SkipForward, Smile, Sparkle, Sparkles, Star, Volume2 } from 'lucide-react';
+import { Calendar, ChevronRight, Leaf, MoreHorizontal, Music, Smile, Sparkle, Sparkles, Star } from 'lucide-react';
 import MemorySlideshow from '../components/memory-slideshow';
 import type { MemorySlide } from '../components/memory-slideshow';
 import HomePlayer from '../components/home-player';
