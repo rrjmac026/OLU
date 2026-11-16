@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('title', 150);
             $table->string('artist', 150)->nullable();
             $table->string('link', 500)->nullable();
+            $table->string('audio_path')->nullable();
             $table->string('note', 500)->nullable();
             $table->timestamps();
         });

@@ -16,6 +16,7 @@ export type SongRow = {
     title: string;
     artist: string | null;
     link: string | null;
+    audio_url: string | null;
     note: string | null;
     is_mine: boolean;
     added_by: string;

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Song;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,6 +38,18 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'status' => fn () => $request->session()->get('status'),
             ],
+            'playlist' => fn () => $request->user()
+            ? Song::whereNotNull('audio_path')
+                ->latest('id')
+                ->get()
+                ->map(fn (Song $s) => [
+                    'id' => $s->id,
+                    'title' => $s->title,
+                    'artist' => $s->artist,
+                    'audio_url' => '/storage/'.$s->audio_path,
+                ])
+                ->values()
+            : [],
         ];
     }
 }

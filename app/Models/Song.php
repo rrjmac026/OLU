@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Song extends Model
 {
-    protected $fillable = ['user_id', 'title', 'artist', 'link', 'note'];
+    protected $fillable = ['user_id', 'title', 'artist', 'link', 'audio_path', 'note'];
 
     public function owner(): BelongsTo
     {

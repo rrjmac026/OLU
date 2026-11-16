@@ -1,14 +1,29 @@
 import { router, useForm } from '@inertiajs/react';
+import { useRef } from 'react';
 import { Field } from '@/components/form-bits';
 import AppLayout from '@/layouts/app-layout';
 import type { SongRow } from '@/lib/bucket';
 
 export default function Index({ songs }: { songs: SongRow[] }) {
-    const form = useForm({ title: '', artist: '', link: '', note: '' });
+    const fileRef = useRef<HTMLInputElement>(null);
+    const form = useForm<{
+        title: string;
+        artist: string;
+        link: string;
+        note: string;
+        audio: File | null;
+    }>({ title: '', artist: '', link: '', note: '', audio: null });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        form.post('/music', { preserveScroll: true, onSuccess: () => form.reset() });
+        form.post('/music', {
+            preserveScroll: true,
+            forceFormData: true,
+            onSuccess: () => {
+                form.reset();
+                if (fileRef.current) fileRef.current.value = '';
+            },
+        });
     };
 
     const remove = (id: number) => {
@@ -36,6 +51,14 @@ export default function Index({ songs }: { songs: SongRow[] }) {
                         onChange={(e) => form.setData('artist', e.target.value)}
                     />
                 </Field>
+                <Field label="Upload music (mp3, m4a, wav… up to 20 MB)" error={form.errors.audio}>
+                    <input
+                        ref={fileRef}
+                        type="file"
+                        accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac"
+                        onChange={(e) => form.setData('audio', e.target.files?.[0] ?? null)}
+                    />
+                </Field>
                 <Field label="Link (optional, https://…)" error={form.errors.link}>
                     <input
                         type="url"
@@ -53,7 +76,7 @@ export default function Index({ songs }: { songs: SongRow[] }) {
                     />
                 </Field>
                 <button type="submit" className="olu-btn" disabled={form.processing}>
-                    Add song
+                    {form.processing ? 'Uploading…' : 'Add song'}
                 </button>
             </form>
 
@@ -67,6 +90,9 @@ export default function Index({ songs }: { songs: SongRow[] }) {
                             <strong>{s.title}</strong>
                             {s.artist && <span className="song-sub">{s.artist}</span>}
                             {s.note && <p className="song-note">“{s.note}”</p>}
+                            {s.audio_url && (
+                                <audio controls preload="none" src={s.audio_url} style={{ width: '100%' }} />
+                            )}
                             <span className="song-sub">added by {s.added_by}</span>
                             {s.link && (
                                 <a href={s.link} target="_blank" rel="noopener noreferrer">

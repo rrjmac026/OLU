@@ -28,11 +28,16 @@ class SongController extends Controller
     {
         $data = $request->validated();
 
+        $audioPath = $request->hasFile('audio')
+            ? $request->file('audio')->store('songs', 'public')
+            : null;
+
         Song::create([
             'user_id' => $request->user()->id,
             'title' => $data['title'],
             'artist' => $data['artist'] ?? null,
             'link' => $data['link'] ?? null,
+            'audio_path' => $audioPath,
             'note' => $data['note'] ?? null,
         ]);
 
@@ -43,6 +48,9 @@ class SongController extends Controller
     {
         abort_unless($song->user_id === $request->user()->id, 404);
 
+        if ($song->audio_path) {
+            Storage::disk('public')->delete($song->audio_path);
+        }
         $song->delete();
 
         return back()->with('status', 'Song removed.');
@@ -55,6 +63,7 @@ class SongController extends Controller
             'title' => $s->title,
             'artist' => $s->artist,
             'link' => $s->link,
+            'audio_url' => $s->audio_path ? '/storage/'.$s->audio_path : null,
             'note' => $s->note,
             'is_mine' => $s->user_id === $viewer->id,
             'added_by' => $s->owner->profile?->display_name ?: $s->owner->name,

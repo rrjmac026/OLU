@@ -11,6 +11,8 @@ import type { SharedProps } from '../types/olu';
 import { Calendar, ChevronRight, Leaf, ListMusic, MoreHorizontal, Music, Play, SkipForward, Smile, Sparkle, Sparkles, Star, Volume2 } from 'lucide-react';
 import MemorySlideshow from '../components/memory-slideshow';
 import type { MemorySlide } from '../components/memory-slideshow';
+import HomePlayer from '../components/home-player';
+import type { PlayerSong } from '../components/home-player';
 
 type Props = {
     checkin_today: { mood: string } | null;
@@ -19,7 +21,7 @@ type Props = {
     daily_question: string | null;
     question_answered: boolean;
     bucket?: { done: number; total: number } | null;
-    current_song?: { title: string; artist?: string | null } | null;
+    songs?: PlayerSong[];
     memory_photos?: MemorySlide[];
 };
 
@@ -30,7 +32,7 @@ export default function Home({
     daily_question,
     question_answered,
     bucket = null,
-    current_song = null,
+    songs = [],
     memory_photos = [],
 }: Props) {
     const { auth } = usePage<SharedProps>().props;
@@ -216,19 +218,7 @@ export default function Home({
                             </h2>
                             <Link href="/music">Open Player →</Link>
                         </div>
-                        <div className="home-player">
-                            <Link href="/music" className="home-play" aria-label="Open player"><Play size={26} fill="currentColor" /></Link>
-                            <Link href="/music" className="home-skip" aria-label="Open player"><SkipForward size={20} fill="currentColor" /></Link>
-                            <div className="home-player-text">
-                                <strong>{current_song?.title ?? 'A Special Song for You'}</strong>
-                                <small>{current_song?.artist ?? 'Our Song'} ♡</small>
-                                <div className="home-bar seek"><span style={{ width: '40%' }} /></div>
-                            </div>
-                            <div className="home-player-tools">
-                                <Volume2 size={20} aria-hidden="true" />
-                                <ListMusic size={20} aria-hidden="true" />
-                            </div>
-                        </div>
+                        <HomePlayer songs={songs} />
                     </div>
 
                     <div className="home-panel home-reminder">

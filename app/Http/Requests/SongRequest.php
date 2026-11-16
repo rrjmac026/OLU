@@ -18,6 +18,7 @@ class SongRequest extends FormRequest
             'artist' => ['nullable', 'string', 'max:150'],
             // http/https only, so javascript: and similar links are rejected.
             'link' => ['nullable', 'url:http,https', 'max:500'],
+            'audio' => ['nullable', 'file', 'mimes:mp3,mpga,m4a,aac,wav,ogg,flac', 'max:20480'], // 20 MB
             'note' => ['nullable', 'string', 'max:500'],
         ];
     }
