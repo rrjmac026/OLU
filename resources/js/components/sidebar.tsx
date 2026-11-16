@@ -8,6 +8,7 @@ type Item = {
     icon: string;
     exact?: boolean;
     match?: string;
+    matches?: string[];
     dot?: boolean;
 };
 
@@ -26,11 +27,13 @@ const mainItems: Item[] = [
     { href: '/music', label: 'Music', icon: '🎵' },
     { href: '/backgrounds', label: 'Backgrounds', icon: '🖼️' },
     { href: '/questions', label: 'Questions', icon: '❓' },
-    { href: '/quiz', label: 'Couple quiz', icon: '💞' },
-    { href: '/wheel', label: 'Random wheel', icon: '🎡' },
-    { href: '/games/tictactoe', label: 'Tic-tac-toe', icon: '⭕' },
-    { href: '/games/memorymatch', label: 'Memory match', icon: '🃏' },
-    { href: '/puzzle', label: 'Daily puzzle', icon: '🧩' },
+    { href: '/garden', label: 'Garden', icon: '🌷' },
+    {
+        href: '/playroom',
+        label: 'Playroom',
+        icon: '🎈',
+        matches: ['/playroom', '/quiz', '/wheel', '/games', '/puzzle', '/achievements'],
+    },
     { href: '/settings/profile', label: 'Settings', icon: '⚙️', match: '/settings' },
 ];
 
@@ -51,6 +54,10 @@ export default function Sidebar({ open, onNavigate }: Props) {
     function isActive(item: Item) {
         if (item.exact) {
             return url === '/' || url.startsWith('/?');
+        }
+
+        if (item.matches) {
+            return item.matches.some((prefix) => url.startsWith(prefix));
         }
 
         return url.startsWith(item.match ?? item.href);

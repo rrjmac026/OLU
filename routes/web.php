@@ -26,7 +26,10 @@ use App\Http\Controllers\WheelController;
 use App\Http\Controllers\TicTacToeController;
 use App\Http\Controllers\MemoryMatchController;
 use App\Http\Controllers\PuzzleController;
+use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\GardenController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -194,4 +197,14 @@ Route::middleware('auth.session')->group(function () {
         Route::patch('/puzzle/items/{item}', [PuzzleController::class, 'toggle']);
         Route::delete('/puzzle/items/{item}', [PuzzleController::class, 'destroy']);
     });
+    
+    Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements');
+
+    Route::get('/playroom', fn () => Inertia::render('playroom/index'))->name('playroom'); 
+
+    // Garden
+    Route::get('/garden', [GardenController::class, 'index'])->name('garden');
+    Route::post('/garden/plant', [GardenController::class, 'plant']);
+    Route::post('/garden/plants/{plant}/water', [GardenController::class, 'water'])->whereNumber('plant');
+    Route::delete('/garden/plants/{plant}', [GardenController::class, 'destroy'])->whereNumber('plant');
 });
