@@ -1,5 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { useState } from 'react';
+import { ArrowLeft, Lock, Pencil, Trash2, Users } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { photoUrl, type MemoryRow } from '@/lib/memories';
 
@@ -12,52 +13,72 @@ export default function Show({ memory }: { memory: MemoryRow }) {
 
     return (
         <AppLayout title={memory.taken_label ?? 'Memory'}>
-            <p>
-                <Link href="/memories">← All memories</Link>
-            </p>
+            <div className="me narrow">
+                <Link href="/memories" className="jr-back">
+                    <ArrowLeft size={16} aria-hidden="true" /> All memories
+                </Link>
 
-            <div className="olu-card">
-                <h1>{memory.taken_label ?? 'Memory'}</h1>
-                <p className="memory-badges">
-                    <span>{memory.visibility === 'shared' ? '💞 Shared' : '🔒 Private'}</span>
-                    {!memory.is_owner && <span>from {memory.owner_name}</span>}
-                </p>
+                <article className="home-panel me-paper">
+                    <header className="me-paper-head">
+                        <h1 className="jr-paper-title">{memory.taken_label ?? 'Memory'}</h1>
+                        <div className="jr-meta">
+                            <span className="ci-chip jr-chip">
+                                {memory.visibility === 'shared' ? (
+                                    <>
+                                        <Users size={11} aria-hidden="true" /> Shared
+                                    </>
+                                ) : (
+                                    <>
+                                        <Lock size={11} aria-hidden="true" /> Private
+                                    </>
+                                )}
+                            </span>
+                            {!memory.is_owner && <span>from {memory.owner_name} ♡</span>}
+                        </div>
+                    </header>
 
-                {active !== null && <img className="memory-hero" src={photoUrl(active)} alt={memory.caption ?? ''} />}
+                    {active !== null && (
+                        <div className="me-stage">
+                            <img src={photoUrl(active)} alt={memory.caption ?? ''} />
+                        </div>
+                    )}
 
-                {memory.photos.length > 1 && (
-                    <div className="memory-thumbs">
-                        {memory.photos.map((p) => (
-                            <button
-                                key={p.id}
-                                type="button"
-                                className={p.id === active ? 'active' : ''}
-                                onClick={() => setActive(p.id)}
-                            >
-                                <img src={photoUrl(p.id)} alt="" />
+                    {memory.photos.length > 1 && (
+                        <div className="me-thumbs">
+                            {memory.photos.map((p) => (
+                                <button
+                                    key={p.id}
+                                    type="button"
+                                    className={p.id === active ? 'active' : ''}
+                                    onClick={() => setActive(p.id)}
+                                    aria-label="Show photo"
+                                >
+                                    <img src={photoUrl(p.id)} alt="" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {memory.caption && <p className="me-caption">{memory.caption}</p>}
+
+                    {memory.moment && (
+                        <p className="me-moment">
+                            🌌 Part of{' '}
+                            <Link href="/timeline">{memory.moment.title}</Link>
+                        </p>
+                    )}
+
+                    {memory.is_owner && (
+                        <div className="jr-actions">
+                            <Link href={`/memories/${memory.id}/edit`} className="home-btn ghost">
+                                <Pencil size={15} aria-hidden="true" /> Edit
+                            </Link>
+                            <button type="button" className="jr-danger" onClick={remove}>
+                                <Trash2 size={15} aria-hidden="true" /> Delete
                             </button>
-                        ))}
-                    </div>
-                )}
-
-                {memory.caption && <p className="memory-caption">{memory.caption}</p>}
-
-                {memory.moment && (
-                    <p>
-                        🌌 Part of: <Link href="/timeline">{memory.moment.title}</Link>
-                    </p>
-                )}
-
-                {memory.is_owner && (
-                    <div className="memory-actions">
-                        <Link href={`/memories/${memory.id}/edit`} className="olu-btn">
-                            Edit
-                        </Link>
-                        <button className="olu-btn" onClick={remove}>
-                            Delete
-                        </button>
-                    </div>
-                )}
+                        </div>
+                    )}
+                </article>
             </div>
         </AppLayout>
     );

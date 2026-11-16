@@ -1,5 +1,6 @@
-import { useForm } from '@inertiajs/react';
-import { Field } from '@/components/form-bits';
+import { Link, useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { Lock, Trash2, UploadCloud, Users, X } from 'lucide-react';
 import { MAX_PHOTOS, photoUrl, type MemoryRow, type MomentOption } from '@/lib/memories';
 
 type Props = {
@@ -7,6 +8,8 @@ type Props = {
     moments: MomentOption[];
     defaultVisibility: 'private' | 'shared';
 };
+
+const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
 
 export default function MemoryForm({ memory, moments, defaultVisibility }: Props) {
     const form = useForm({
@@ -19,6 +22,16 @@ export default function MemoryForm({ memory, moments, defaultVisibility }: Props
         remove_photos: [] as number[],
     });
 
+    const [dragging, setDragging] = useState(false);
+    const [previews, setPreviews] = useState<string[]>([]);
+
+    // live previews of the newly picked photos
+    useEffect(() => {
+        const urls = form.data.photos.map((f) => URL.createObjectURL(f));
+        setPreviews(urls);
+        return () => urls.forEach((u) => URL.revokeObjectURL(u));
+    }, [form.data.photos]);
+
     const kept = memory ? memory.photos.filter((p) => !form.data.remove_photos.includes(p.id)).length : 0;
     const room = Math.max(MAX_PHOTOS - kept, 0);
 
@@ -30,8 +43,16 @@ export default function MemoryForm({ memory, moments, defaultVisibility }: Props
                 : [...form.data.remove_photos, id],
         );
 
-    const onFiles = (e: React.ChangeEvent<HTMLInputElement>) =>
-        form.setData('photos', Array.from(e.target.files ?? []).slice(0, room));
+    const addFiles = (list: FileList | File[] | null) => {
+        const picked = Array.from(list ?? []).filter((f) => ALLOWED.includes(f.type));
+        form.setData('photos', [...form.data.photos, ...picked].slice(0, room));
+    };
+
+    const removeNew = (index: number) =>
+        form.setData(
+            'photos',
+            form.data.photos.filter((_, i) => i !== index),
+        );
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,76 +64,162 @@ export default function MemoryForm({ memory, moments, defaultVisibility }: Props
         .map(([, msg]) => msg);
 
     return (
-        <form onSubmit={submit} className="olu-card">
+        <form onSubmit={submit} className="home-panel jr-form">
             {memory && memory.photos.length > 0 && (
-                <Field label="Current photos (tick to remove)">
-                    <div className="memory-edit-grid">
-                        {memory.photos.map((p) => (
-                            <label key={p.id} className="memory-edit-photo">
-                                <img src={photoUrl(p.id)} alt="" />
-                                <input
-                                    type="checkbox"
-                                    checked={form.data.remove_photos.includes(p.id)}
-                                    onChange={() => toggleRemove(p.id)}
-                                />
-                                <span>Remove</span>
-                            </label>
-                        ))}
+                <div>
+                    <label className="ci-label">Current photos (tap to remove)</label>
+                    <div className="me-tiles">
+                        {memory.photos.map((p) => {
+                            const removed = form.data.remove_photos.includes(p.id);
+                            return (
+                                <button
+                                    key={p.id}
+                                    type="button"
+                                    className={`me-tile${removed ? ' removed' : ''}`}
+                                    onClick={() => toggleRemove(p.id)}
+                                    aria-label={removed ? 'Keep photo' : 'Remove photo'}
+                                >
+                                    <img src={photoUrl(p.id)} alt="" />
+                                    <span className="me-tile-badge">
+                                        {removed ? 'Will be removed' : <Trash2 size={14} aria-hidden="true" />}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
-                </Field>
+                </div>
             )}
 
-            <Field label={`Add photos (${room} left · JPG, PNG, WebP · 8 MB each)`} error={photoErrors[0]}>
-                <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    multiple
-                    disabled={room === 0}
-                    onChange={onFiles}
-                />
-                {form.data.photos.length > 0 && <small>{form.data.photos.length} selected</small>}
-            </Field>
+            <div>
+                <label className="ci-label">Add photos ({room} left · JPG, PNG, WebP · 8 MB each)</label>
+                <label
+                    className={`mu-drop${dragging ? ' drag' : ''}${form.data.photos.length ? ' has' : ''}${room === 0 ? ' disabled' : ''}`}
+                    onDragOver={(e) => {
+                        e.preventDefault();
+                        if (room > 0) setDragging(true);
+                    }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={(e) => {
+                        e.preventDefault();
+                        setDragging(false);
+                        if (room > 0) addFiles(e.dataTransfer.files);
+                    }}
+                >
+                    <input
+                        type="file"
+                        className="mu-file-input"
+                        accept="image/jpeg,image/png,image/webp"
+                        multiple
+                        disabled={room === 0}
+                        onChange={(e) => {
+                            addFiles(e.target.files);
+                            e.target.value = '';
+                        }}
+                    />
+                    <span className="mu-drop-icon">
+                        <UploadCloud size={26} aria-hidden="true" />
+                    </span>
+                    <span className="mu-drop-text">
+                        <strong>{room === 0 ? 'Photo limit reached' : 'Choose or drop your photos'}</strong>
+                        <small>
+                            {form.data.photos.length > 0
+                                ? `${form.data.photos.length} selected`
+                                : 'You can pick several at once'}
+                        </small>
+                    </span>
+                </label>
+                {photoErrors[0] && <p className="olu-cal-error">{photoErrors[0]}</p>}
 
-            <Field label="Caption / story" error={form.errors.caption}>
+                {previews.length > 0 && (
+                    <div className="me-tiles new">
+                        {previews.map((src, i) => (
+                            <div key={src} className="me-tile static">
+                                <img src={src} alt="" />
+                                <button
+                                    type="button"
+                                    className="me-tile-x"
+                                    onClick={() => removeNew(i)}
+                                    aria-label="Remove this photo"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div>
+                <label className="ci-label">Caption / story</label>
                 <textarea
+                    className="ci-note"
                     rows={5}
                     maxLength={1000}
+                    placeholder="What made this moment special?"
                     value={form.data.caption}
                     onChange={(e) => form.setData('caption', e.target.value)}
                 />
-            </Field>
+                {form.errors.caption && <p className="olu-cal-error">{form.errors.caption}</p>}
+            </div>
 
-            <Field label="Date (optional)" error={form.errors.taken_on}>
-                <input type="date" value={form.data.taken_on} onChange={(e) => form.setData('taken_on', e.target.value)} />
-            </Field>
+            <div className="jr-two me-two">
+                <div>
+                    <label className="ci-label">Date (optional)</label>
+                    <input
+                        type="date"
+                        value={form.data.taken_on}
+                        onChange={(e) => form.setData('taken_on', e.target.value)}
+                    />
+                    {form.errors.taken_on && <p className="olu-cal-error">{form.errors.taken_on}</p>}
+                </div>
+                <div>
+                    <label className="ci-label">Link to a timeline moment (optional)</label>
+                    <select
+                        value={form.data.timeline_moment_id}
+                        onChange={(e) => form.setData('timeline_moment_id', e.target.value)}
+                    >
+                        <option value="">No link</option>
+                        {moments.map((m) => (
+                            <option key={m.id} value={m.id}>
+                                {m.title}
+                            </option>
+                        ))}
+                    </select>
+                    {form.errors.timeline_moment_id && (
+                        <p className="olu-cal-error">{form.errors.timeline_moment_id}</p>
+                    )}
+                </div>
+            </div>
 
-            <Field label="Link to a timeline moment (optional)" error={form.errors.timeline_moment_id}>
-                <select
-                    value={form.data.timeline_moment_id}
-                    onChange={(e) => form.setData('timeline_moment_id', e.target.value)}
-                >
-                    <option value="">No link</option>
-                    {moments.map((m) => (
-                        <option key={m.id} value={m.id}>
-                            {m.title}
-                        </option>
-                    ))}
-                </select>
-            </Field>
+            <div>
+                <label className="ci-label">Who can see this?</label>
+                <div className="ci-seg">
+                    <button
+                        type="button"
+                        className={form.data.visibility === 'private' ? 'on' : ''}
+                        onClick={() => form.setData('visibility', 'private')}
+                    >
+                        <Lock size={15} aria-hidden="true" /> Private
+                    </button>
+                    <button
+                        type="button"
+                        className={form.data.visibility === 'shared' ? 'on' : ''}
+                        onClick={() => form.setData('visibility', 'shared')}
+                    >
+                        <Users size={15} aria-hidden="true" /> Shared
+                    </button>
+                </div>
+                {form.errors.visibility && <p className="olu-cal-error">{form.errors.visibility}</p>}
+            </div>
 
-            <Field label="Who can see this?" error={form.errors.visibility}>
-                <select
-                    value={form.data.visibility}
-                    onChange={(e) => form.setData('visibility', e.target.value as 'private' | 'shared')}
-                >
-                    <option value="private">🔒 Private (only me)</option>
-                    <option value="shared">💞 Shared</option>
-                </select>
-            </Field>
-
-            <button type="submit" className="olu-btn" disabled={form.processing}>
-                {memory ? 'Save changes' : 'Save memory'}
-            </button>
+            <div className="jr-actions">
+                <button type="submit" className="home-btn" disabled={form.processing}>
+                    {form.processing ? 'Saving…' : memory ? 'Save changes ♡' : 'Save memory ♡'}
+                </button>
+                <Link href={memory ? `/memories/${memory.id}` : '/memories'} className="jr-cancel">
+                    Cancel
+                </Link>
+            </div>
         </form>
     );
 }
