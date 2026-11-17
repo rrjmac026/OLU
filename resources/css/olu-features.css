@@ -573,21 +573,3 @@ a.olu-btn {
 .home-skip, .home-tool { background: none; color: var(--ou-text); text-decoration: none; display: grid; place-items: center; padding: 0; }
 .home-bar.seek { cursor: pointer; }
 .home-bar.seek > span { transition: width .25s linear; }
-
-.olu-mini {
-    position: fixed; left: calc(15.2rem + 1.4rem); bottom: 1.4rem; z-index: 40;
-    display: flex; align-items: center; gap: .7rem; width: 17rem; padding: .55rem .8rem;
-    border-radius: 999px; background: var(--ou-side); border: 1px solid var(--ou-border);
-    box-shadow: 0 10px 28px -10px rgba(0, 0, 0, .5); color: var(--ou-text);
-}
-.olu-mini-btn { display: grid; place-items: center; border: 0; background: none; color: var(--ou-text); cursor: pointer; padding: 0; }
-.olu-mini-btn.main { flex: none; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--ou-accent); color: var(--ou-on-accent); }
-.olu-mini-text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.2; }
-.olu-mini-text strong { font-weight: 500; font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.olu-mini-text small { color: var(--ou-muted); font-size: .75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.olu-mini-bar { height: 3px; margin-top: .3rem; border-radius: 999px; background: var(--ou-bar); overflow: hidden; }
-.olu-mini-bar > span { display: block; height: 100%; background: var(--ou-accent); }
-
-@media (max-width: 768px) {
-    .olu-mini { left: 1rem; right: 6rem; width: auto; }
-}
