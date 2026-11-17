@@ -13,11 +13,13 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Events\QuestionAnswered;
 
 class QuestionController extends Controller
 {
     public function index(Request $request): Response
     {
+        
         $user = $request->user();
         $today = $this->today($user);
         $question = ContentItem::dailyPick(ContentKind::Question, $today);
@@ -88,6 +90,7 @@ class QuestionController extends Controller
                 'visibility' => $data['visibility'],
             ]);
         }
+        broadcast(new QuestionAnswered());
 
         return back()->with('status', 'Answer saved.');
     }
@@ -97,6 +100,8 @@ class QuestionController extends Controller
         abort_unless($answer->user_id === $request->user()->id, 404);
 
         $answer->delete();
+        
+        broadcast(new QuestionAnswered());
 
         return back()->with('status', 'Answer deleted.');
     }

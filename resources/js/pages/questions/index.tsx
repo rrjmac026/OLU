@@ -1,6 +1,7 @@
 import { router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEcho } from '@laravel/echo-react';
 import AppLayout from '@/layouts/app-layout';
+import { useState } from 'react';
 
 
 type Mine = { id: number; answer: string; visibility: 'private' | 'shared' };
@@ -28,6 +29,11 @@ export default function Index({ today, history, default_visibility }: Props) {
         answer: today.mine?.answer ?? '',
         visibility: today.mine?.visibility ?? default_visibility,
     });
+
+    useEcho('questions', '.answers.changed', () => {
+        router.reload({ only: ['today', 'history'] });
+    });
+
     // UI-only for now (not sent to the server)
     const [mood, setMood] = useState<string>('Loved');
 
