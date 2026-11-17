@@ -3,16 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Background;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class BackgroundController extends Controller
 {
+    /** Keys of the built-in animated scenes (must match resources/js/features/backgrounds/scenes). */
+    private const PRESETS = ['starry', 'sunset', 'comet', 'sakura', 'cozy', 'field', 'castle', 'lake'];
+
     public function index(Request $request): Response
     {
         $user = $request->user();
@@ -25,6 +30,7 @@ class BackgroundController extends Controller
                 'is_active' => $b->is_active,
                 'is_mine' => $b->user_id === $user->id,
                 'added_by' => $b->owner->profile?->display_name ?: $b->owner->name,
+                'preset' => $b->preset,
             ]);
 
         return Inertia::render('backgrounds/index', ['backgrounds' => $items]);
@@ -36,6 +42,7 @@ class BackgroundController extends Controller
         $request->validate([
             'image' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
             'activate' => ['nullable', 'boolean'],
+            'preset' => ['nullable', 'string', Rule::in(self::PRESETS)],
         ], [
             'image.mimes' => 'Backgrounds must be JPG, PNG or WebP.',
             'image.max' => 'The image must be 8 MB or smaller.',
@@ -53,6 +60,12 @@ class BackgroundController extends Controller
             'size' => $size,
             'is_active' => false,
         ]);
+
+        // Set directly so this works without touching the model's $fillable.
+        if ($request->filled('preset')) {
+            $background->preset = $request->input('preset');
+            $background->save();
+        }
 
         if ($request->boolean('activate', true)) {
             $this->makeActive($background);
@@ -99,6 +112,16 @@ class BackgroundController extends Controller
         abort_unless($active, 404);
 
         return $this->serve($active, 'public, max-age=86400');
+    }
+
+    /** Public: tells the landing/login page which animated scene (if any) is active. */
+    public function meta(): JsonResponse
+    {
+        $active = Background::where('is_active', true)->first();
+
+        return response()
+            ->json(['preset' => $active?->preset])
+            ->header('Cache-Control', 'public, max-age=60');
     }
 
     private function serve(Background $background, string $cache): BinaryFileResponse

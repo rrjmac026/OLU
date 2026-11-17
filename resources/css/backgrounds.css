@@ -200,3 +200,11 @@
     .bk-up-side { padding-left: 0; border-left: 0; }
     .bk-grid { grid-template-columns: minmax(0, 1fr); }
 }
+/* ---------- Tile shine (follows the cursor) ---------- */
+.bk-tile::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .2s;
+    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .26), transparent 65%);
+}
+.bk-tile:hover::after { opacity: 1; }
+/* ---------- Animated overlay on a hovered / active tile ---------- */
+.bk-tile .bk-live-img { position: absolute; inset: 0; width: 100%; height: 100%; animation: bk-fade .5s ease; }

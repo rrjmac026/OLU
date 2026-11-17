@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { LiveBackdrop } from '@/features/backgrounds/components/live-backdrop';
 
 type Props = { background: { version: number } | null };
 
@@ -18,6 +19,7 @@ export default function Welcome({ background }: Props) {
                     </Link>
                 </main>
             </div>
+            <LiveBackdrop />
         </>
     );
 }

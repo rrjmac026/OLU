@@ -40,6 +40,7 @@ use Inertia\Inertia;
 */
 Route::get('/', WelcomeController::class)->name('home');
 Route::get('backdrop', [BackgroundController::class, 'backdrop']);
+Route::get('backdrop/meta', [BackgroundController::class, 'meta']);
 
 Route::get('login', [AuthController::class, 'create'])->name('login');
 Route::post('login', [AuthController::class, 'store']);

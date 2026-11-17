@@ -1,0 +1,44 @@
+/* Full-screen animated background (used on landing / login) */
+.lb { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+
+/* stack: static bg (.landing) < animation (.lb) < dark overlay < card */
+.landing-overlay { z-index: 1; }
+
+.lb-img {
+    display: block; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 1s ease;
+}
+.lb-img.on { opacity: 1; }
+
+.lb-meteor {
+    position: absolute; width: 170px; height: 2px; border-radius: 2px; opacity: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff);
+    transform: rotate(28deg);
+    animation: lb-meteor var(--dur, 10s) linear var(--delay, 0s) infinite;
+}
+.lb-meteor::after {
+    content: ''; position: absolute; right: -2px; top: -2px; width: 6px; height: 6px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 12px 3px rgba(255, 255, 255, .7);
+}
+
+@keyframes lb-meteor {
+    0%   { opacity: 0; transform: translate(0, 0) rotate(28deg); }
+    1%   { opacity: 1; }
+    11%  { opacity: 0; transform: translate(460px, 245px) rotate(28deg); }
+    100% { opacity: 0; transform: translate(460px, 245px) rotate(28deg); }
+}
+
+@media (prefers-reduced-motion: reduce) { .lb { display: none; } }
+/* Full-screen animated background (used on landing / login) */
+.lb { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+
+/* stack: static bg (.landing) < animation (.lb) < dark overlay < card */
+.landing-overlay { z-index: 1; }
+
+.lb-img {
+    display: block; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 1s ease;
+}
+.lb-img.on { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) { .lb { display: none; } }

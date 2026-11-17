@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('path');
             $table->string('mime', 50);
             $table->unsignedInteger('size');
+            $table->string('preset', 40)->nullable();
             $table->boolean('is_active')->default(false);
             $table->timestamps();
 
