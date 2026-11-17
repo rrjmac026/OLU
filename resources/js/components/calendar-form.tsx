@@ -34,7 +34,7 @@ export default function CalendarForm({ initial, action, method, submitLabel }: P
     }
 
     return (
-        <form className="olu-cal-form" onSubmit={submit}>
+        <form className="cl-form" onSubmit={submit}>
             <label>
                 Title
                 <input
@@ -44,10 +44,10 @@ export default function CalendarForm({ initial, action, method, submitLabel }: P
                     onChange={(e) => form.setData('title', e.target.value)}
                     required
                 />
-                {form.errors.title && <span className="olu-cal-error">{form.errors.title}</span>}
+                {form.errors.title && <span className="cl-err">{form.errors.title}</span>}
             </label>
 
-            <div className="row">
+            <div className="cl-row">
                 <label>
                     Date
                     <input
@@ -56,7 +56,7 @@ export default function CalendarForm({ initial, action, method, submitLabel }: P
                         onChange={(e) => form.setData('event_date', e.target.value)}
                         required
                     />
-                    {form.errors.event_date && <span className="olu-cal-error">{form.errors.event_date}</span>}
+                    {form.errors.event_date && <span className="cl-err">{form.errors.event_date}</span>}
                 </label>
                 <label>
                     Time (optional)
@@ -65,16 +65,13 @@ export default function CalendarForm({ initial, action, method, submitLabel }: P
                         value={form.data.event_time}
                         onChange={(e) => form.setData('event_time', e.target.value)}
                     />
-                    {form.errors.event_time && <span className="olu-cal-error">{form.errors.event_time}</span>}
+                    {form.errors.event_time && <span className="cl-err">{form.errors.event_time}</span>}
                 </label>
             </div>
 
             <label>
                 Type
-                <select
-                    value={form.data.type}
-                    onChange={(e) => form.setData('type', e.target.value as EventType)}
-                >
+                <select value={form.data.type} onChange={(e) => form.setData('type', e.target.value as EventType)}>
                     {eventTypes.map((t) => (
                         <option key={t.value} value={t.value}>
                             {t.icon} {t.label}
@@ -91,10 +88,10 @@ export default function CalendarForm({ initial, action, method, submitLabel }: P
                     maxLength={2000}
                     onChange={(e) => form.setData('notes', e.target.value)}
                 />
-                {form.errors.notes && <span className="olu-cal-error">{form.errors.notes}</span>}
+                {form.errors.notes && <span className="cl-err">{form.errors.notes}</span>}
             </label>
 
-            <label className="olu-cal-check">
+            <label className="cl-check">
                 <input
                     type="checkbox"
                     checked={form.data.repeats_yearly}
@@ -109,17 +106,17 @@ export default function CalendarForm({ initial, action, method, submitLabel }: P
                     value={form.data.visibility}
                     onChange={(e) => form.setData('visibility', e.target.value as 'private' | 'shared')}
                 >
-                    <option value="private">Only me</option>
-                    <option value="shared">Shared with my person</option>
+                    <option value="private">🔒 Only me</option>
+                    <option value="shared">💞 Shared with my person</option>
                 </select>
-                {form.errors.visibility && <span className="olu-cal-error">{form.errors.visibility}</span>}
+                {form.errors.visibility && <span className="cl-err">{form.errors.visibility}</span>}
             </label>
 
-            <div className="row">
-                <button type="submit" className="olu-btn" disabled={form.processing}>
+            <div className="cl-row">
+                <button type="submit" className="cl-btn" disabled={form.processing}>
                     {submitLabel}
                 </button>
-                <Link href="/calendar" className="olu-btn">
+                <Link href="/calendar" className="cl-btn ghost">
                     Cancel
                 </Link>
             </div>

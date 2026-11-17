@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import './olu-memories.css';
 @import './olu-timeline.css';
+@import './questions.css';
+@import './calendar.css';
+@import './bucket.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

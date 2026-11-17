@@ -18,6 +18,7 @@
         "@types/react-dom": "^19.2.0",
         "@vitejs/plugin-react": "^6.1.1",
         "clsx": "^2.1.1",
+        "complimentjs": "^1.0.0",
         "concurrently": "^10.0.3",
         "jsmediatags": "^3.9.7",
         "laravel-vite-plugin": "^3.1",
