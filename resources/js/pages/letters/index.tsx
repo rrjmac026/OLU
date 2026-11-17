@@ -1,5 +1,6 @@
 ﻿import '../../../css/letters.css';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage, usePoll } from '@inertiajs/react';
+
 import {
     ArrowUpDown,
     Calendar,
@@ -14,7 +15,7 @@ import {
     PenLine,
     Sparkles,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import LetterScene, { sceneFor } from '@/components/letter-scene';
 import { occasionInfo, type LetterRow } from '@/lib/letters';
@@ -214,6 +215,17 @@ function LetterItem({ l }: { l: Row }) {
 export default function Index({ letters }: { letters: Row[] }) {
     const { auth } = usePage<SharedProps>().props;
     const isAdmin = auth.user.role === 'admin';
+
+    usePoll(5000, { only: ['letters'] });
+
+    // ...and refresh instantly when you come back to the tab
+    useEffect(() => {
+        const onVisible = () => {
+            if (document.visibilityState === 'visible') router.reload({ only: ['letters'] });
+        };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, []);
 
     const [tab, setTab] = useState<TabKey>('all');
     const [newest, setNewest] = useState(true);
