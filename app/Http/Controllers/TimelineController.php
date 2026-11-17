@@ -17,7 +17,10 @@ class TimelineController extends Controller
     {
         $me = $request->user();
 
-        $moments = TimelineMoment::with('user.profile')
+        $moments = TimelineMoment::with([
+                'user.profile',
+                'memories' => fn ($q) => $q->visibleTo($me)->with('photos')->orderBy('id'),
+            ])
             ->visibleTo($me)
             ->orderByDesc('moment_date')
             ->orderByDesc('id')
