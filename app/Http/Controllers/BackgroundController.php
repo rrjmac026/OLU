@@ -3,20 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Background;
+use App\Services\Media\MediaStorage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class BackgroundController extends Controller
 {
     /** Keys of the built-in animated scenes (must match resources/js/features/backgrounds/scenes). */
     private const PRESETS = ['starry', 'sunset', 'comet', 'sakura', 'cozy', 'field', 'castle', 'lake'];
+
+    public function __construct(private MediaStorage $media) {}
 
     public function index(Request $request): Response
     {
@@ -51,7 +53,7 @@ class BackgroundController extends Controller
         $file = $request->file('image');
         $mime = $file->getMimeType();
         $size = $file->getSize();
-        $path = $file->store('backgrounds', 'local');
+        $path = $this->media->put($file, 'backgrounds');
 
         $background = Background::create([
             'user_id' => $request->user()->id,
@@ -93,25 +95,25 @@ class BackgroundController extends Controller
     {
         abort_unless($background->user_id === $request->user()->id, 404);
 
-        Storage::disk('local')->delete($background->path);
+        $this->media->delete($background->path);
         $background->delete();
 
         return back()->with('status', 'Background deleted.');
     }
 
     /** Thumbnails in the picker: login required. */
-    public function image(Background $background): BinaryFileResponse
+    public function image(Request $request, Background $background): SymfonyResponse
     {
-        return $this->serve($background, 'private, max-age=3600');
+        return $this->serve($request, $background, 'private, max-age=3600');
     }
 
     /** Public: only the ACTIVE background is ever exposed to guests. */
-    public function backdrop(): BinaryFileResponse
+    public function backdrop(Request $request): SymfonyResponse
     {
         $active = Background::where('is_active', true)->first();
         abort_unless($active, 404);
 
-        return $this->serve($active, 'public, max-age=86400');
+        return $this->serve($request, $active, 'public, max-age=86400');
     }
 
     /** Public: tells the landing/login page which animated scene (if any) is active. */
@@ -124,16 +126,9 @@ class BackgroundController extends Controller
             ->header('Cache-Control', 'public, max-age=60');
     }
 
-    private function serve(Background $background, string $cache): BinaryFileResponse
+    private function serve(Request $request, Background $background, string $cache): SymfonyResponse
     {
-        $path = Storage::disk('local')->path($background->path);
-        abort_unless(is_file($path), 404);
-
-        return response()->file($path, [
-            'Content-Type' => $background->mime,
-            'Cache-Control' => $cache,
-            'X-Content-Type-Options' => 'nosniff',
-        ]);
+        return $this->media->response($request, $background->path, $background->mime, $cache);
     }
 
     private function makeActive(Background $background): void

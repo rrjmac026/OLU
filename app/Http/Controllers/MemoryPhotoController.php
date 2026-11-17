@@ -3,24 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\MemoryPhoto;
+use App\Services\Media\MediaStorage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class MemoryPhotoController extends Controller
 {
     /** Every image request is authorized: owner, or the memory is shared. */
-    public function show(Request $request, MemoryPhoto $photo): BinaryFileResponse
+    public function show(Request $request, MemoryPhoto $photo, MediaStorage $media): Response
     {
         abort_unless($photo->memory->canBeViewedBy($request->user()), 404);
 
-        $path = Storage::disk('local')->path($photo->path);
-        abort_unless(is_file($path), 404);
-
-        return response()->file($path, [
-            'Content-Type' => $photo->mime,
-            'Cache-Control' => 'private, max-age=3600',
-            'X-Content-Type-Options' => 'nosniff',
-        ]);
+        return $media->response($request, $photo->path, $photo->mime, 'private, max-age=3600');
     }
 }

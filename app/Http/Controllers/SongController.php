@@ -5,14 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SongRequest;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\Media\MediaStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class SongController extends Controller
 {
+    public function __construct(private MediaStorage $media) {}
+
     public function index(Request $request): Response
     {
         $user = $request->user();
@@ -30,7 +33,7 @@ class SongController extends Controller
         $data = $request->validated();
 
         $audioPath = $request->hasFile('audio')
-            ? $request->file('audio')->store('songs', 'public')
+            ? $this->media->put($request->file('audio'), 'songs')
             : null;
 
         Song::create([
@@ -45,13 +48,19 @@ class SongController extends Controller
         return back()->with('status', 'Song added.');
     }
 
+    /** Streams the audio (Range-aware, so the player can seek). Songs are shared by nature: any logged-in user. */
+    public function audio(Request $request, Song $song): SymfonyResponse
+    {
+        abort_unless($song->audio_path, 404);
+
+        return $this->media->response($request, $song->audio_path, null, 'private, max-age=3600');
+    }
+
     public function destroy(Request $request, Song $song): RedirectResponse
     {
         abort_unless($song->user_id === $request->user()->id, 404);
 
-        if ($song->audio_path) {
-            Storage::disk('public')->delete($song->audio_path);
-        }
+        $this->media->delete($song->audio_path);
         $song->delete();
 
         return back()->with('status', 'Song removed.');
@@ -64,7 +73,7 @@ class SongController extends Controller
             'title' => $s->title,
             'artist' => $s->artist,
             'link' => $s->link,
-            'audio_url' => $s->audio_path ? '/storage/'.$s->audio_path : null,
+            'audio_url' => $s->audio_path ? "/music/{$s->id}/audio" : null,
             'note' => $s->note,
             'is_mine' => $s->user_id === $viewer->id,
             'added_by' => $s->owner->profile?->display_name ?: $s->owner->name,

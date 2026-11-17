@@ -6,9 +6,9 @@ use App\Http\Requests\MemoryRequest;
 use App\Models\Memory;
 use App\Models\TimelineMoment;
 use App\Models\User;
+use App\Services\Media\MediaStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,6 +16,8 @@ use Inertia\Response;
 class MemoryController extends Controller
 {
     private const MAX_PHOTOS = 6;
+
+    public function __construct(private MediaStorage $media) {}
 
     public function index(Request $request): Response
     {
@@ -117,7 +119,7 @@ class MemoryController extends Controller
         ]);
 
         foreach ($removing as $photo) {
-            Storage::disk('local')->delete($photo->path);
+            $this->media->delete($photo->path);
             $photo->delete();
         }
 
@@ -131,7 +133,7 @@ class MemoryController extends Controller
         $memory = $this->ownedOrFail($request, $memory);
 
         foreach ($memory->photos as $photo) {
-            Storage::disk('local')->delete($photo->path);
+            $this->media->delete($photo->path);
         }
 
         $memory->delete(); // photo rows cascade
@@ -154,7 +156,7 @@ class MemoryController extends Controller
         foreach ($files as $file) {
             $mime = $file->getMimeType();
             $size = $file->getSize();
-            $path = $file->store("memories/{$memory->user_id}", 'local');
+            $path = $this->media->put($file, "memories/{$memory->user_id}");
 
             $memory->photos()->create(['path' => $path, 'mime' => $mime, 'size' => $size]);
         }
