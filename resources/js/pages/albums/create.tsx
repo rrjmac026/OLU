@@ -1,5 +1,5 @@
 import { Link, useForm } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SongTrimmer from '@/components/song-trimmer';
 import AppLayout from '@/layouts/app-layout';
 import {
@@ -21,9 +21,57 @@ type SongOption = { id: number; title: string; artist: string | null; playable: 
 type Props = { photos: Photo[]; songs: SongOption[] };
 
 const MAX_SLIDES = 30;
+const MIN_DURATION = 1;
+const MAX_DURATION = 300;
+const DURATION_PRESETS = [3, 5, 8, 10, 15, 20, 30];
 
 let seq = 0;
 const newUid = () => `s${++seq}`;
+
+const clampDuration = (n: number) => Math.min(MAX_DURATION, Math.max(MIN_DURATION, Math.round(n)));
+
+const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+};
+
+/** Number input that lets you clear and retype freely, and commits a valid value. */
+function DurationInput({ value, onCommit }: { value: number; onCommit: (n: number) => void }) {
+    const [text, setText] = useState(String(value));
+
+    useEffect(() => {
+        setText(String(value));
+    }, [value]);
+
+    const commit = (raw: string) => {
+        const n = parseInt(raw, 10);
+        if (Number.isNaN(n)) {
+            setText(String(value));
+            return;
+        }
+        const c = clampDuration(n);
+        setText(String(c));
+        onCommit(c);
+    };
+
+    return (
+        <input
+            type="number"
+            inputMode="numeric"
+            min={MIN_DURATION}
+            max={MAX_DURATION}
+            value={text}
+            onChange={(e) => {
+                setText(e.target.value);
+                const n = parseInt(e.target.value, 10);
+                if (!Number.isNaN(n) && n >= MIN_DURATION && n <= MAX_DURATION) onCommit(n);
+            }}
+            onBlur={(e) => commit(e.target.value)}
+            style={{ width: 90 }}
+        />
+    );
+}
 
 export default function Create({ photos, songs }: Props) {
     const form = useForm<{
@@ -55,11 +103,22 @@ export default function Create({ photos, songs }: Props) {
         return m;
     }, [slides]);
 
-    const defaultSong = songs.find((s) => s.id === form.data.default_song_id) ?? null;
-    const slideSong = current ? (songs.find((s) => s.id === current.song_id) ?? null) : null;
+    const totalDuration = useMemo(() => slides.reduce((sum, s) => sum + s.duration, 0), [slides]);
 
-    const songId = current ? (current.song_id ?? form.data.default_song_id) : form.data.default_song_id;
-    const previewSong = songs.find((s) => s.id === songId) ?? null;
+    const defaultSong = songs.find((s) => s.id === form.data.default_song_id) ?? null;
+
+    /* Keep the song clip exactly as long as the whole album (sum of all slide durations). */
+    useEffect(() => {
+        if (!defaultSong?.audio_url || totalDuration <= 0) return;
+
+        const start = form.data.default_song_start ?? 0;
+        const end = start + totalDuration;
+
+        if (form.data.default_song_start !== start || form.data.default_song_end !== end) {
+            form.setData((d) => ({ ...d, default_song_start: start, default_song_end: end }));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [totalDuration, defaultSong?.id, form.data.default_song_start, form.data.default_song_end]);
 
     const addPhoto = (p: Photo) => {
         if (slides.length >= MAX_SLIDES) return;
@@ -115,9 +174,10 @@ export default function Create({ photos, songs }: Props) {
                 caption_position: s.caption_position,
                 filter: s.filter,
                 transition: s.transition,
-                song_id: s.song_id,
-                song_start: s.song_start,
-                song_end: s.song_end,
+                // One song for the whole album now, so no per-slide songs.
+                song_id: null,
+                song_start: null,
+                song_end: null,
             })),
         }));
         form.post('/albums');
@@ -189,7 +249,7 @@ export default function Create({ photos, songs }: Props) {
                             </div>
 
                             <label>
-                                Album song (plays on every slide without its own song)
+                                Album song (plays through the whole album)
                                 <select
                                     value={form.data.default_song_id ?? ''}
                                     onChange={(e) => {
@@ -207,13 +267,25 @@ export default function Create({ photos, songs }: Props) {
                             </label>
 
                             {defaultSong?.audio_url && (
-                                <SongTrimmer
-                                    key={defaultSong.id}
-                                    audioUrl={defaultSong.audio_url}
-                                    start={form.data.default_song_start}
-                                    end={form.data.default_song_end}
-                                    onChange={(s, e) => form.setData((d) => ({ ...d, default_song_start: s, default_song_end: e }))}
-                                />
+                                <>
+                                    <small className="al-hint">
+                                        The clip is always as long as your whole album ({formatTime(totalDuration)}). Drag to choose where in the
+                                        song it starts.
+                                    </small>
+                                    <SongTrimmer
+                                        key={defaultSong.id}
+                                        audioUrl={defaultSong.audio_url}
+                                        start={form.data.default_song_start}
+                                        end={form.data.default_song_end}
+                                        onChange={(s) =>
+                                            form.setData((d) => ({
+                                                ...d,
+                                                default_song_start: s ?? 0,
+                                                default_song_end: (s ?? 0) + Math.max(totalDuration, 1),
+                                            }))
+                                        }
+                                    />
+                                </>
                             )}
                             {defaultSong && !defaultSong.audio_url && (
                                 <small className="al-hint">This song is link-only, so it can't play inside the album. Pick one with an uploaded file.</small>
@@ -244,7 +316,10 @@ export default function Create({ photos, songs }: Props) {
 
                         {/* Slides */}
                         <section className="al-card">
-                            <h2>🎞️ Slides ({slides.length})</h2>
+                            <h2>
+                                🎞️ Slides ({slides.length})
+                                {slides.length > 0 && <small className="al-hint"> · Total {formatTime(totalDuration)}</small>}
+                            </h2>
                             {slideErrors.length > 0 && <small className="al-err">{slideErrors[0]}</small>}
                             {slides.length === 0 && <p className="al-hint">Nothing here yet. Pick some photos above.</p>}
 
@@ -342,56 +417,28 @@ export default function Create({ photos, songs }: Props) {
                                         </div>
                                     </div>
 
-                                    <label>
-                                        Duration: {current.duration}s
-                                        <input
-                                            type="range"
-                                            min={2}
-                                            max={15}
-                                            value={current.duration}
-                                            onChange={(e) => patch(current.uid, { duration: Number(e.target.value) })}
-                                        />
-                                    </label>
-
-                                    <label>
-                                        Song for this slide
-                                        <select
-                                            value={current.song_id ?? ''}
-                                            onChange={(e) =>
-                                                patch(current.uid, {
-                                                    song_id: e.target.value ? Number(e.target.value) : null,
-                                                    song_start: null,
-                                                    song_end: null,
-                                                })
-                                            }
-                                        >
-                                            <option value="">Use the album song</option>
-                                            {songs.map((s) => (
-                                                <option key={s.id} value={s.id}>
-                                                    {songLabel(s)}
-                                                </option>
+                                    <div className="al-field">
+                                        <span>How long this slide shows (this slide only)</span>
+                                        <div className="al-seg">
+                                            {DURATION_PRESETS.map((d) => (
+                                                <button
+                                                    key={d}
+                                                    type="button"
+                                                    className={current.duration === d ? 'on' : ''}
+                                                    onClick={() => patch(current.uid, { duration: d })}
+                                                >
+                                                    {d}s
+                                                </button>
                                             ))}
-                                        </select>
-                                    </label>
-
-                                    {slideSong?.audio_url && (
-                                        <SongTrimmer
-                                            key={`${current.uid}-${slideSong.id}`}
-                                            audioUrl={slideSong.audio_url}
-                                            start={current.song_start}
-                                            end={current.song_end}
-                                            onChange={(s, e) => patch(current.uid, { song_start: s, song_end: e })}
-                                        />
-                                    )}
-                                    {slideSong && !slideSong.audio_url && (
-                                        <small className="al-hint">This song is link-only, so it can't play inside the album.</small>
-                                    )}
-                                    {!slideSong && defaultSong && (
-                                        <small className="al-hint">This slide uses the album song and its clip.</small>
-                                    )}
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                                            <DurationInput value={current.duration} onCommit={(n) => patch(current.uid, { duration: n })} />
+                                            <span>seconds (1 to {MAX_DURATION})</span>
+                                        </div>
+                                    </div>
 
                                     <button type="button" className="al-btn ghost" onClick={applyLookToAll}>
-                                        Apply this look to all slides
+                                        Apply filter, transition, duration &amp; caption position to all slides
                                     </button>
                                 </div>
                             )}
@@ -431,7 +478,7 @@ export default function Create({ photos, songs }: Props) {
                             )}
 
                             {current?.caption && <p className={`al-cap ${current.caption_position}`}>{current.caption}</p>}
-                            {previewSong && <div className="al-song">🎵 {previewSong.title}</div>}
+                            {defaultSong && <div className="al-song">🎵 {defaultSong.title}</div>}
                         </div>
                         <small className="al-hint">Live preview. Use Preview in the song clip box to hear the music.</small>
                     </aside>

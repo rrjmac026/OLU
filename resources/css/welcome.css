@@ -1,0 +1,389 @@
+/* ---------- stage ---------- */
+.wl-stage {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+    perspective: 1000px;
+}
+
+/* ---------- twinkling stars ---------- */
+.wl-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.wl-stars span {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px 1px rgba(255, 214, 236, 0.8);
+    opacity: 0;
+    animation: wl-twinkle ease-in-out infinite;
+}
+
+@keyframes wl-twinkle {
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.2);
+    }
+}
+
+/* ---------- card ---------- */
+.wl-card {
+    --rx: 0deg;
+    --ry: 0deg;
+    --gx: 50%;
+    --gy: 30%;
+
+    position: relative;
+    width: min(440px, 100%);
+    padding: 40px 32px 32px;
+    text-align: center;
+    color: #fbf3ff;
+    border-radius: 28px;
+    background: linear-gradient(160deg, rgba(60, 40, 96, 0.62), rgba(30, 20, 52, 0.7));
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow:
+        0 30px 70px rgba(10, 4, 24, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transform-style: preserve-3d;
+    transition: transform 0.18s ease-out;
+    cursor: default;
+    user-select: none;
+    animation: wl-enter 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* gradient border */
+.wl-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(140deg, #f78fc0, rgba(167, 139, 250, 0.5) 45%, #f78fc0);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+@keyframes wl-enter {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.wl-glare {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(260px circle at var(--gx) var(--gy), rgba(255, 190, 225, 0.22), transparent 65%);
+}
+
+/* ---------- orbit + heart ---------- */
+.wl-orbit {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 18px;
+    display: grid;
+    place-items: center;
+    transform: translateZ(40px);
+}
+
+.wl-ring {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px dashed rgba(247, 143, 192, 0.45);
+}
+
+.wl-star {
+    position: absolute;
+    inset: 0;
+    animation: wl-spin 9s linear infinite;
+}
+
+.wl-star::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+}
+
+.wl-star-a::after {
+    background: #f78fc0;
+    box-shadow: 0 0 14px 3px rgba(247, 143, 192, 0.9);
+}
+
+.wl-star-b {
+    animation-delay: -4.5s;
+}
+
+.wl-star-b::after {
+    background: #b9a2ff;
+    box-shadow: 0 0 14px 3px rgba(185, 162, 255, 0.9);
+}
+
+.wl-orbit:hover .wl-star {
+    animation-duration: 3.2s;
+}
+
+@keyframes wl-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.wl-heart {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 30px;
+    line-height: 1;
+    color: #fff;
+    cursor: pointer;
+    background: radial-gradient(circle at 35% 30%, #ffb3d6, #f0629f 70%);
+    box-shadow:
+        0 8px 24px rgba(240, 98, 159, 0.55),
+        0 0 0 6px rgba(247, 143, 192, 0.15);
+    animation: wl-beat 1.8s ease-in-out infinite;
+    transition: transform 0.15s ease;
+}
+
+.wl-heart:hover {
+    transform: scale(1.08);
+}
+
+.wl-heart:active {
+    transform: scale(0.92);
+}
+
+.wl-heart:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+@keyframes wl-beat {
+    0%,
+    100% {
+        box-shadow:
+            0 8px 24px rgba(240, 98, 159, 0.55),
+            0 0 0 6px rgba(247, 143, 192, 0.15);
+    }
+    50% {
+        box-shadow:
+            0 8px 30px rgba(240, 98, 159, 0.75),
+            0 0 0 12px rgba(247, 143, 192, 0.08);
+    }
+}
+
+/* ---------- text ---------- */
+.wl-title {
+    margin: 0 0 10px;
+    font-size: clamp(28px, 6vw, 36px);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    transform: translateZ(30px);
+}
+
+.wl-title span {
+    background: linear-gradient(90deg, #f78fc0, #c4a8ff, #f78fc0);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: wl-shine 5s linear infinite;
+}
+
+@keyframes wl-shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.wl-line {
+    min-height: 48px;
+    margin: 0 0 18px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(251, 243, 255, 0.82);
+    animation: wl-fade 0.6s ease both;
+}
+
+@keyframes wl-fade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.wl-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.wl-chip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: rgba(251, 243, 255, 0.9);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.wl-chip b {
+    color: #f78fc0;
+}
+
+/* ---------- login button ---------- */
+.wl-login {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 22px;
+    overflow: hidden;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(135deg, #f78fc0, #d9609f);
+    box-shadow: 0 12px 28px rgba(240, 98, 159, 0.45);
+    transform: translateZ(30px);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.wl-login::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+.wl-login:hover {
+    transform: translateZ(30px) translateY(-2px);
+    box-shadow: 0 16px 34px rgba(240, 98, 159, 0.6);
+}
+
+.wl-login:hover::after {
+    left: 130%;
+}
+
+.wl-login i {
+    font-style: normal;
+    transition: transform 0.2s ease;
+}
+
+.wl-login:hover i {
+    transform: translateX(5px);
+}
+
+.wl-login:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+/* ---------- floating hearts ---------- */
+.wl-hearts {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.wl-float {
+    position: absolute;
+    translate: -50% -50%;
+    animation: wl-rise 1.6s ease-out forwards;
+    filter: drop-shadow(0 2px 6px rgba(240, 98, 159, 0.5));
+}
+
+@keyframes wl-rise {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.4) rotate(0deg);
+    }
+    15% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), -190px) scale(1.15) rotate(var(--rot));
+    }
+}
+
+/* ---------- small screens + reduced motion ---------- */
+@media (max-width: 480px) {
+    .wl-card {
+        padding: 32px 22px 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wl-card,
+    .wl-star,
+    .wl-heart,
+    .wl-title span,
+    .wl-line,
+    .wl-stars span {
+        animation: none;
+    }
+
+    .wl-card {
+        transform: none;
+    }
+
+    .wl-stars span {
+        opacity: 0.6;
+    }
+}

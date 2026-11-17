@@ -28,7 +28,7 @@ class AlbumRequest extends FormRequest
             'slides' => ['required', 'array', 'min:1', 'max:30'],
             'slides.*.memory_photo_id' => ['required', 'integer', 'exists:memory_photos,id'],
             'slides.*.caption' => ['nullable', 'string', 'max:200'],
-            'slides.*.duration' => ['required', 'integer', 'between:2,15'],
+            'slides.*.duration' => ['required', 'integer', 'between:1,300'],
             'slides.*.caption_position' => ['required', Rule::in(Album::POSITIONS)],
             'slides.*.filter' => ['required', Rule::in(Album::FILTERS)],
             'slides.*.transition' => ['required', Rule::in(Album::TRANSITIONS)],

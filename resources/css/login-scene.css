@@ -1,0 +1,256 @@
+/* ---------- scene base ---------- */
+.ls-scene {
+    --mx: 50vw;
+    --my: 40vh;
+
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+        radial-gradient(1200px 700px at 50% -10%, #2b1a4a 0%, transparent 65%),
+        radial-gradient(900px 600px at 50% 110%, #3a1740 0%, transparent 60%),
+        linear-gradient(180deg, #120b22 0%, #190f2e 55%, #1d1033 100%);
+}
+
+/* keep the login card above the scene */
+.lg-card {
+    z-index: 1;
+}
+
+/* ---------- drifting color glows ---------- */
+.ls-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    will-change: transform;
+}
+
+.ls-blob-a {
+    top: -12%;
+    left: -8%;
+    width: 46vmax;
+    height: 46vmax;
+    background: radial-gradient(circle, #f06aa8, transparent 68%);
+    animation: ls-drift-a 22s ease-in-out infinite alternate;
+}
+
+.ls-blob-b {
+    right: -12%;
+    bottom: -14%;
+    width: 52vmax;
+    height: 52vmax;
+    background: radial-gradient(circle, #7c5cf0, transparent 68%);
+    animation: ls-drift-b 26s ease-in-out infinite alternate;
+}
+
+.ls-blob-c {
+    top: 38%;
+    left: 42%;
+    width: 30vmax;
+    height: 30vmax;
+    background: radial-gradient(circle, #ff9ccf, transparent 70%);
+    opacity: 0.22;
+    animation: ls-drift-c 30s ease-in-out infinite alternate;
+}
+
+@keyframes ls-drift-a {
+    to {
+        transform: translate(14vw, 12vh) scale(1.15);
+    }
+}
+
+@keyframes ls-drift-b {
+    to {
+        transform: translate(-12vw, -10vh) scale(1.1);
+    }
+}
+
+@keyframes ls-drift-c {
+    to {
+        transform: translate(-16vw, 8vh) scale(1.3);
+    }
+}
+
+/* ---------- cursor glow ---------- */
+.ls-cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 420px;
+    height: 420px;
+    margin: -210px 0 0 -210px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(247, 143, 192, 0.2), transparent 65%);
+    transform: translate(var(--mx), var(--my));
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ---------- stars ---------- */
+.ls-stars {
+    position: absolute;
+    inset: 0;
+}
+
+.ls-stars span {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px 1px rgba(255, 214, 236, 0.8);
+    opacity: 0;
+    animation: ls-twinkle ease-in-out infinite;
+}
+
+@keyframes ls-twinkle {
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.2);
+    }
+}
+
+/* ---------- shooting stars ---------- */
+.ls-shoot {
+    position: absolute;
+    width: 130px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95));
+    filter: drop-shadow(0 0 6px rgba(255, 190, 225, 0.9));
+    opacity: 0;
+    transform: rotate(28deg);
+    animation: ls-shoot 9s ease-in infinite;
+}
+
+.ls-shoot-a {
+    top: 8%;
+    left: 6%;
+    animation-delay: 1s;
+}
+
+.ls-shoot-b {
+    top: 20%;
+    left: 52%;
+    animation-delay: 4.5s;
+    animation-duration: 11s;
+}
+
+.ls-shoot-c {
+    top: 4%;
+    left: 28%;
+    animation-delay: 7.5s;
+    animation-duration: 13s;
+}
+
+@keyframes ls-shoot {
+    0% {
+        opacity: 0;
+        transform: rotate(28deg) translateX(0);
+    }
+    3% {
+        opacity: 1;
+    }
+    12% {
+        opacity: 0;
+        transform: rotate(28deg) translateX(520px);
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(28deg) translateX(520px);
+    }
+}
+
+/* ---------- moon ---------- */
+.ls-moon {
+    position: absolute;
+    top: 9%;
+    right: 10%;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    box-shadow: inset -20px -4px 0 0 #ffe6f4;
+    filter: drop-shadow(0 0 18px rgba(255, 190, 225, 0.7));
+    animation: ls-bob 7s ease-in-out infinite alternate;
+}
+
+@keyframes ls-bob {
+    to {
+        transform: translateY(10px) rotate(-6deg);
+    }
+}
+
+/* ---------- floating hearts ---------- */
+.ls-hearts {
+    position: absolute;
+    inset: 0;
+}
+
+.ls-hearts span {
+    position: absolute;
+    bottom: -40px;
+    opacity: 0;
+    filter: drop-shadow(0 2px 8px rgba(240, 98, 159, 0.45));
+    animation: ls-float linear infinite;
+}
+
+@keyframes ls-float {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(-8deg);
+    }
+    10% {
+        opacity: 0.75;
+    }
+    50% {
+        transform: translate(calc(var(--sway) * -1), -55vh) rotate(8deg);
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--sway), -115vh) rotate(-8deg);
+    }
+}
+
+/* ---------- small screens + reduced motion ---------- */
+@media (max-width: 600px) {
+    .ls-moon {
+        width: 56px;
+        height: 56px;
+        box-shadow: inset -13px -3px 0 0 #ffe6f4;
+    }
+
+    .ls-cursor {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ls-blob,
+    .ls-moon,
+    .ls-shoot,
+    .ls-hearts span,
+    .ls-stars span {
+        animation: none;
+    }
+
+    .ls-stars span {
+        opacity: 0.6;
+    }
+
+    .ls-hearts,
+    .ls-shoot {
+        display: none;
+    }
+
+    .ls-cursor {
+        transition: none;
+    }
+}

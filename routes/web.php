@@ -31,6 +31,7 @@ use App\Http\Controllers\GardenController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AlbumController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -223,4 +224,9 @@ Route::middleware('auth.session')->group(function () {
     Route::post('music', [SongController::class, 'store']);
     Route::get('music/{song}/audio', [SongController::class, 'audio'])->whereNumber('song');
     Route::delete('music/{song}', [SongController::class, 'destroy'])->whereNumber('song');
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/read', [NotificationController::class, 'readAll']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'readOne'])->whereNumber('id');
+    Route::delete('/notifications', [NotificationController::class, 'clear']);
 });

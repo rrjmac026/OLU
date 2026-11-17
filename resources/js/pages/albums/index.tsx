@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { CalendarDays, Heart, Images, LayoutGrid, List, Play, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import AlbumViewer, { AlbumMenu } from '@/components/album-viewer';
 import AppLayout from '@/layouts/app-layout';
@@ -12,12 +12,34 @@ type Props = {
     can_manage: boolean;
 };
 
+const REFRESH_MS = 5000;
+
 export default function Index({ albums, can_manage }: Props) {
     const [view, setView] = useState<'grid' | 'list'>('grid');
     const [selectedId, setSelectedId] = useState<number | null>(albums[0]?.id ?? null);
     const [play, setPlay] = useState<{ id: number; n: number } | null>(null);
 
     const selected = albums.find((a) => a.id === selectedId) ?? albums[0] ?? null;
+
+    /* ----- auto refresh: poll while the tab is visible, and refresh when you come back ----- */
+    useEffect(() => {
+        const refresh = () => {
+            if (document.visibilityState !== 'visible') return;
+            router.reload({
+                only: ['albums', 'can_manage'],
+            });
+        };
+
+        const timer = window.setInterval(refresh, REFRESH_MS);
+        document.addEventListener('visibilitychange', refresh);
+        window.addEventListener('focus', refresh);
+
+        return () => {
+            window.clearInterval(timer);
+            document.removeEventListener('visibilitychange', refresh);
+            window.removeEventListener('focus', refresh);
+        };
+    }, []);
 
     const select = (id: number) => {
         setSelectedId(id);

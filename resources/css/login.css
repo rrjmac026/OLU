@@ -1,0 +1,376 @@
+/* ---------- card ---------- */
+.lg-card {
+    position: relative;
+    width: min(420px, 100%);
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 28px;
+    color: #fbf3ff;
+    text-align: left;
+    background: linear-gradient(160deg, rgba(60, 40, 96, 0.7), rgba(30, 20, 52, 0.78));
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow:
+        0 30px 70px rgba(10, 4, 24, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    animation: lg-enter 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.lg-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(140deg, #f78fc0, rgba(167, 139, 250, 0.5) 45%, #f78fc0);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.85;
+    z-index: 3;
+}
+
+@keyframes lg-enter {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.lg-card.shake {
+    animation: lg-shake 0.5s ease;
+}
+
+@keyframes lg-shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-10px);
+    }
+    40% {
+        transform: translateX(9px);
+    }
+    60% {
+        transform: translateX(-6px);
+    }
+    80% {
+        transform: translateX(4px);
+    }
+}
+
+/* ---------- pals ---------- */
+.lg-pals {
+    position: relative;
+    height: 96px;
+    margin-top: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 14px;
+    overflow: hidden;
+}
+
+.lg-pal {
+    --px: 0px;
+    --py: 0px;
+    width: 120px;
+    height: 96px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.lg-pal-b {
+    margin-left: -8px;
+}
+
+.lg-pals.busy .lg-pal-a {
+    animation: lg-hop 0.45s ease-in-out infinite alternate;
+}
+
+.lg-pals.busy .lg-pal-b {
+    animation: lg-hop 0.45s ease-in-out 0.22s infinite alternate;
+}
+
+@keyframes lg-hop {
+    to {
+        transform: translateY(-8px);
+    }
+}
+
+.lg-eye {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: lg-blink 4.6s infinite;
+}
+
+.lg-pal-b .lg-eye {
+    animation-delay: -2.1s;
+}
+
+@keyframes lg-blink {
+    0%,
+    94%,
+    100% {
+        transform: scaleY(1);
+    }
+    97% {
+        transform: scaleY(0.08);
+    }
+}
+
+.lg-pupil {
+    transform: translate(var(--px), var(--py));
+    transition: transform 0.14s ease-out;
+}
+
+.lg-hand {
+    transition: transform 0.38s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.lg-hand-l.up {
+    transform: translate(10px, -74px);
+}
+
+.lg-hand-r.up {
+    transform: translate(-10px, -74px);
+}
+
+/* ---------- body ---------- */
+.lg-body {
+    padding: 8px 28px 26px;
+}
+
+.lg-title {
+    margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+    color: #fbf3ff;
+}
+
+.lg-title span {
+    background: linear-gradient(90deg, #f78fc0, #c4a8ff, #f78fc0);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: lg-shine 5s linear infinite;
+}
+
+@keyframes lg-shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.lg-sub {
+    margin: 0 0 20px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(251, 243, 255, 0.7);
+}
+
+/* ---------- fields ---------- */
+.lg-field {
+    display: block;
+    margin-bottom: 14px;
+}
+
+.lg-label {
+    display: block;
+    margin: 0 0 6px 4px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba(251, 243, 255, 0.78);
+}
+
+.lg-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    color: rgba(251, 243, 255, 0.6);
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.lg-input:focus-within {
+    border-color: #f78fc0;
+    background: rgba(255, 255, 255, 0.1);
+    color: #f78fc0;
+    box-shadow: 0 0 0 4px rgba(247, 143, 192, 0.18);
+}
+
+.lg-field.has-error .lg-input {
+    border-color: #ef4466;
+    box-shadow: 0 0 0 4px rgba(239, 68, 102, 0.15);
+}
+
+.lg-input svg {
+    flex-shrink: 0;
+}
+
+.lg-input input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    font-size: 15px;
+    color: #fbf3ff;
+}
+
+.lg-input input::placeholder {
+    color: rgba(251, 243, 255, 0.35);
+}
+
+.lg-eye-btn {
+    display: grid;
+    place-items: center;
+    padding: 6px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.lg-eye-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.lg-eye-btn:focus-visible {
+    outline: 2px solid #f78fc0;
+}
+
+.lg-err {
+    display: block;
+    margin: 6px 0 0 4px;
+    font-size: 12.5px;
+    color: #ff8fa6;
+}
+
+/* ---------- submit ---------- */
+.lg-submit {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px 22px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(135deg, #f78fc0, #d9609f);
+    box-shadow: 0 12px 28px rgba(240, 98, 159, 0.45);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.lg-submit::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+.lg-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(240, 98, 159, 0.6);
+}
+
+.lg-submit:hover:not(:disabled)::after {
+    left: 130%;
+}
+
+.lg-submit:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+}
+
+.lg-submit:disabled {
+    opacity: 0.8;
+    cursor: wait;
+}
+
+.lg-submit i {
+    font-style: normal;
+    transition: transform 0.2s ease;
+}
+
+.lg-submit:hover:not(:disabled) i {
+    transform: translateX(5px);
+}
+
+.lg-submit:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+.lg-back {
+    display: block;
+    margin-top: 16px;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(251, 243, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.lg-back:hover {
+    color: #f78fc0;
+}
+
+/* ---------- small screens + reduced motion ---------- */
+@media (max-width: 480px) {
+    .lg-body {
+        padding: 8px 20px 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lg-card,
+    .lg-card.shake,
+    .lg-eye,
+    .lg-title span,
+    .lg-pals.busy .lg-pal {
+        animation: none;
+    }
+
+    .lg-hand,
+    .lg-pupil {
+        transition: none;
+    }
+}
