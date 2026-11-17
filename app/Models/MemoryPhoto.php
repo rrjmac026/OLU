@@ -13,4 +13,11 @@ class MemoryPhoto extends Model
     {
         return $this->belongsTo(Memory::class);
     }
+    /** True when this photo is used by a published album (so the partner may view it). */
+    public function isInPublishedAlbum(): bool
+    {
+        return AlbumSlide::where('memory_photo_id', $this->id)
+            ->whereHas('album', fn ($q) => $q->where('is_published', true))
+            ->exists();
+    }
 }

@@ -9,10 +9,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MemoryPhotoController extends Controller
 {
-    /** Every image request is authorized: owner, or the memory is shared. */
+    /** Every image request is authorized: owner, shared memory, or a photo in a published album. */
     public function show(Request $request, MemoryPhoto $photo, MediaStorage $media): Response
     {
-        abort_unless($photo->memory->canBeViewedBy($request->user()), 404);
+        $user = $request->user();
+
+        abort_unless(
+            $photo->memory->canBeViewedBy($user) || $photo->isInPublishedAlbum(),
+            404
+        );
 
         return $media->response($request, $photo->path, $photo->mime, 'private, max-age=3600');
     }

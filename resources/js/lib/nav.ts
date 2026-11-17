@@ -10,6 +10,7 @@ import {
     HeartHandshake,
     House,
     Image,
+    Images,
     Mail,
     MessageCircle,
     MessageSquare,
@@ -48,6 +49,7 @@ export const navSections: NavSection[] = [
         items: [
             { href: '/journal', label: 'Journal', icon: NotebookPen },
             { href: '/memories', label: 'Memories', icon: Camera },
+            { href: '/albums', label: 'Album', icon: Images },
             { href: '/timeline', label: 'Timeline', icon: Milestone },
             { href: '/letters', label: 'Letters', icon: Mail },
         ],

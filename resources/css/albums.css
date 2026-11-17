@@ -1,0 +1,165 @@
+.al { display: grid; gap: 1.25rem; }
+.al-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.al-head h1 { margin: 0; }
+.al-head p { margin: .25rem 0 0; opacity: .75; }
+.al-head-actions { display: flex; gap: .5rem; }
+
+.al-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1.25rem; align-items: start; }
+.al-col { display: grid; gap: 1.25rem; min-width: 0; }
+.al-side { position: sticky; top: 1rem; display: grid; gap: .5rem; justify-items: center; }
+
+.al-card {
+    background: var(--olu-card, rgba(255, 255, 255, .06));
+    border: 1px solid var(--olu-border, rgba(255, 255, 255, .12));
+    border-radius: 18px;
+    padding: 1.1rem;
+    display: grid;
+    gap: .85rem;
+}
+.al-card h2 { margin: 0; font-size: 1.05rem; }
+.al label, .al-field { display: grid; gap: .35rem; font-size: .9rem; }
+.al-field > span { opacity: .85; }
+.al input:not([type='range']), .al textarea, .al select {
+    width: 100%; padding: .6rem .75rem; border-radius: 12px; font: inherit; color: inherit;
+    background: rgba(255, 255, 255, .06); border: 1px solid var(--olu-border, rgba(255, 255, 255, .15));
+}
+.al-hint { margin: 0; font-size: .82rem; opacity: .7; }
+.al-err { color: #ff8da1; }
+
+.al-btn {
+    padding: .6rem 1.1rem; border-radius: 999px; border: 0; cursor: pointer; font: inherit; text-decoration: none;
+    background: var(--olu-accent, #b48cff); color: #190f2e; font-weight: 600;
+}
+.al-btn.ghost { background: transparent; color: inherit; border: 1px solid var(--olu-border, rgba(255, 255, 255, .25)); }
+.al-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.al-swatches { display: flex; gap: .6rem; }
+.al-swatches button { width: 38px; height: 38px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+.al-swatches button.on { border-color: #fff; box-shadow: 0 0 0 2px var(--olu-accent, #b48cff); }
+
+.al-seg { display: flex; flex-wrap: wrap; gap: .4rem; }
+.al-seg button {
+    padding: .4rem .8rem; border-radius: 999px; cursor: pointer; font: inherit; color: inherit;
+    background: transparent; border: 1px solid var(--olu-border, rgba(255, 255, 255, .2));
+}
+.al-seg button.on { background: var(--olu-accent, #b48cff); color: #190f2e; border-color: transparent; }
+
+.al-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: .5rem; max-height: 320px; overflow-y: auto; }
+.al-photos button { position: relative; padding: 0; border: 0; border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; background: none; }
+.al-photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.al-photos b {
+    position: absolute; top: 6px; right: 6px; min-width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center;
+    background: var(--olu-accent, #b48cff); color: #190f2e; font-size: .75rem;
+}
+
+.al-strip { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .25rem; }
+.al-strip button { position: relative; flex: 0 0 64px; height: 88px; padding: 0; border: 2px solid transparent; border-radius: 12px; overflow: hidden; cursor: pointer; background: none; }
+.al-strip button.on { border-color: var(--olu-accent, #b48cff); }
+.al-strip img { width: 100%; height: 100%; object-fit: cover; }
+.al-strip span { position: absolute; bottom: 3px; left: 5px; font-size: .7rem; color: #fff; text-shadow: 0 1px 3px #000; }
+
+.al-editor { display: grid; gap: .85rem; padding-top: .85rem; border-top: 1px solid var(--olu-border, rgba(255, 255, 255, .12)); }
+.al-editor-bar { display: flex; justify-content: space-between; align-items: center; }
+.al-mini { padding: .3rem .7rem; margin-left: .3rem; border-radius: 999px; cursor: pointer; font: inherit; color: inherit; background: transparent; border: 1px solid var(--olu-border, rgba(255, 255, 255, .2)); }
+.al-mini:disabled { opacity: .35; cursor: not-allowed; }
+.al-mini.danger { color: #ff8da1; }
+
+/* phone preview */
+.al-phone { position: relative; width: 270px; aspect-ratio: 9 / 16; border-radius: 28px; overflow: hidden; border: 3px solid rgba(255, 255, 255, .15); display: grid; place-items: center; }
+.al-shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.al-empty { opacity: .7; padding: 1rem; text-align: center; }
+.al-bars { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 4px; z-index: 3; }
+.al-bars i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, .35); }
+.al-bars i.on, .al-bars i.done { background: #fff; }
+.al-cap {
+    position: absolute; left: 14px; right: 14px; z-index: 2; margin: 0; text-align: center; color: #fff; font-weight: 600;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .7);
+}
+.al-cap.top { top: 36px; }
+.al-cap.center { top: 50%; transform: translateY(-50%); }
+.al-cap.bottom { bottom: 52px; }
+.al-song {
+    position: absolute; bottom: 14px; left: 14px; z-index: 2; padding: .25rem .65rem; border-radius: 999px; font-size: .75rem; color: #fff;
+    background: rgba(0, 0, 0, .45); backdrop-filter: blur(6px);
+}
+
+@keyframes al-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes al-slide { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes al-zoom { from { transform: scale(1.15); opacity: 0; } to { transform: none; opacity: 1; } }
+.t-fade { animation: al-fade .6s ease; }
+.t-slide { animation: al-slide .5s ease; }
+.t-zoom { animation: al-zoom .7s ease; }
+
+@media (max-width: 960px) {
+    .al-layout { grid-template-columns: 1fr; }
+    .al-side { position: static; order: -1; }
+}
+
+.al select {
+    color-scheme: dark;
+}
+
+.al select option {
+    background: #1e1235;
+    color: #f5ecff;
+}
+
+.al select option:checked,
+.al select option:hover {
+    background: #5b21b6;
+    color: #fff;
+}
+.al-save-row {
+    display: grid;
+    gap: .5rem;
+    padding-top: .85rem;
+    border-top: 1px solid var(--olu-border, rgba(255, 255, 255, .12));
+}
+.al-save-row .al-btn { width: 100%; padding: .8rem 1.1rem; }
+
+/* ---------- song trimmer ---------- */
+.st {
+    display: grid;
+    gap: .7rem;
+    padding: .85rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--olu-border, rgba(255, 255, 255, .15));
+}
+.st-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap; font-size: .9rem; }
+.st-actions { display: flex; gap: .4rem; }
+.st-btn {
+    display: inline-flex; align-items: center; gap: .35rem; padding: .35rem .8rem; border-radius: 999px; cursor: pointer;
+    font: inherit; font-size: .82rem; color: inherit; background: transparent; border: 1px solid var(--olu-border, rgba(255, 255, 255, .25));
+}
+.st-btn:hover:not(:disabled) { background: rgba(255, 255, 255, .1); }
+.st-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.st-track {
+    position: relative; height: 80px; border-radius: 12px; overflow: hidden;
+    background: rgba(0, 0, 0, .28); touch-action: none; user-select: none;
+}
+.st-wave { position: absolute; inset: 0; display: flex; align-items: center; gap: 1px; padding: 0 2px; pointer-events: none; }
+.st-wave i { flex: 1; min-height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .28); transition: background .15s; }
+.st-wave i.in { background: var(--olu-accent, #b48cff); }
+.st-dim { position: absolute; top: 0; bottom: 0; background: rgba(0, 0, 0, .5); pointer-events: none; }
+
+.st-region {
+    position: absolute; top: 0; bottom: 0; cursor: grab;
+    border-top: 2px solid var(--olu-accent, #b48cff); border-bottom: 2px solid var(--olu-accent, #b48cff);
+    background: rgba(180, 140, 255, .12);
+}
+.st-region:active { cursor: grabbing; }
+.st-grip {
+    position: absolute; top: -2px; bottom: -2px; width: 16px; cursor: ew-resize; outline: none;
+    background: var(--olu-accent, #b48cff);
+    display: grid; place-items: center;
+}
+.st-grip::after { content: ''; width: 2px; height: 22px; border-radius: 2px; background: #190f2e; opacity: .7; }
+.st-grip.l { left: 0; border-radius: 10px 0 0 10px; }
+.st-grip.r { right: 0; border-radius: 0 10px 10px 0; }
+.st-grip:focus-visible { box-shadow: 0 0 0 2px #fff; }
+
+.st-playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; box-shadow: 0 0 8px #fff; pointer-events: none; }
+.st-times { display: flex; justify-content: space-between; gap: .5rem; font-size: .82rem; opacity: .85; }
+.st-times b { font-variant-numeric: tabular-nums; }

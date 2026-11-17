@@ -30,6 +30,7 @@ use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\GardenController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\AlbumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -208,4 +209,18 @@ Route::middleware('auth.session')->group(function () {
     Route::post('/garden/plant', [GardenController::class, 'plant']);
     Route::post('/garden/plants/{plant}/water', [GardenController::class, 'water'])->whereNumber('plant');
     Route::delete('/garden/plants/{plant}', [GardenController::class, 'destroy'])->whereNumber('plant');
+
+    Route::get('albums', [AlbumController::class, 'index']);
+
+    Route::middleware('role:admin')->group(function () {
+        Route::get('albums/create', [AlbumController::class, 'create']);
+        Route::post('albums', [AlbumController::class, 'store']);
+        Route::post('albums/{album}/publish', [AlbumController::class, 'togglePublish']);
+        Route::delete('albums/{album}', [AlbumController::class, 'destroy']);
+    });
+
+    Route::get('music', [SongController::class, 'index']);
+    Route::post('music', [SongController::class, 'store']);
+    Route::get('music/{song}/audio', [SongController::class, 'audio'])->whereNumber('song');
+    Route::delete('music/{song}', [SongController::class, 'destroy'])->whereNumber('song');
 });

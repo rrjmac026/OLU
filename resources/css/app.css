@@ -4,6 +4,8 @@
 @import './questions.css';
 @import './calendar.css';
 @import './bucket.css';
+@import './albums.css';
+@import './album-page.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
