@@ -43,7 +43,6 @@ export default function AppLayout({ title, children }: Props) {
                         <button type="button" className="olu-burger" aria-label="Toggle menu" onClick={() => setSidebarOpen((v) => !v)}>
                             ☰
                         </button>
-                        <QuickSearch />
                         <div className="olu-topbar-spacer" />
                         <button type="button" className="olu-bell" aria-label="Notifications">
                             <Bell size={20} />

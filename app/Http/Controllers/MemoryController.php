@@ -21,15 +21,19 @@ class MemoryController extends Controller
     {
         $user = $request->user();
 
-        $memories = Memory::with(['owner.profile', 'photos', 'moment'])
+        $models = Memory::with(['owner.profile', 'photos', 'moment'])
             ->visibleTo($user)
             ->orderByDesc('taken_on')
             ->orderByDesc('id')
             ->limit(200)
-            ->get()
-            ->map(fn (Memory $m) => $this->payload($m, $user));
+            ->get();
 
-        return Inertia::render('memories/index', ['memories' => $memories]);
+        $bytes = (int) $models->sum(fn (Memory $m) => $m->photos->sum('size'));
+
+        return Inertia::render('memories/index', [
+            'memories' => $models->map(fn (Memory $m) => $this->payload($m, $user))->values()->all(),
+            'stats' => $this->storage($bytes),
+        ]);
     }
 
     public function create(Request $request): Response
@@ -181,6 +185,20 @@ class MemoryController extends Controller
             ->all();
     }
 
+    /** @return array{storage_value: float, storage_unit: string} */
+    private function storage(int $bytes): array
+    {
+        if ($bytes >= 1024 ** 3) {
+            return ['storage_value' => round($bytes / 1024 ** 3, 1), 'storage_unit' => 'GB'];
+        }
+
+        if ($bytes >= 1024 ** 2) {
+            return ['storage_value' => round($bytes / 1024 ** 2, 1), 'storage_unit' => 'MB'];
+        }
+
+        return ['storage_value' => round($bytes / 1024, 1), 'storage_unit' => 'KB'];
+    }
+
     private function payload(Memory $m, User $viewer): array
     {
         $isOwner = $m->isOwnedBy($viewer);
@@ -194,6 +212,8 @@ class MemoryController extends Controller
             'is_owner' => $isOwner,
             'owner_name' => $m->owner->profile?->display_name ?: $m->owner->name,
             'photos' => $m->photos->map(fn ($p) => ['id' => $p->id])->values()->all(),
+            // Yes/no only, so the gallery can filter "Special Moments" without exposing a private title.
+            'has_moment' => $m->timeline_moment_id !== null,
             // Only the owner sees the timeline link, so a private moment's title never leaks.
             'moment' => ($isOwner && $m->moment) ? ['id' => $m->moment->id, 'title' => $m->moment->title] : null,
             'timeline_moment_id' => $isOwner ? $m->timeline_moment_id : null,
