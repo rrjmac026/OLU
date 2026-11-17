@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import { LogOut, Moon, Sun } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { AuthUser } from '../types/olu';
 
@@ -59,24 +60,42 @@ export default function ProfileMenu({ user }: Props) {
 
     return (
         <div className="olu-profile" ref={ref}>
-            <button type="button" className="olu-profile-btn" onClick={() => setOpen((v) => !v)}>
+            <button
+                type="button"
+                className="olu-profile-btn"
+                aria-haspopup="menu"
+                aria-expanded={open}
+                onClick={() => setOpen((v) => !v)}
+            >
                 <span className="olu-avatar">{name.charAt(0).toUpperCase()}</span>
                 <span className="olu-profile-name">{name}</span>
             </button>
 
             {open && (
-                <div className="olu-menu">
+                <div className="olu-menu" role="menu">
                     <div className="olu-menu-head">
-                        <strong>{name}</strong>
-                        <small>{user.email}</small>
+                        <span className="olu-avatar big">{name.charAt(0).toUpperCase()}</span>
+                        <div className="olu-menu-who">
+                            <strong>{name}</strong>
+                            <small>{user.email}</small>
+                        </div>
                     </div>
-                    <button type="button" className="olu-menu-item" onClick={toggleTheme}>
-                        <span>🌙 Dark mode</span>
-                        <span className={`olu-switch ${isDark ? 'on' : ''}`} />
-                    </button>
-                    <button type="button" className="olu-menu-item" onClick={logout}>
-                        <span>🚪 Log out</span>
-                    </button>
+
+                    <div className="olu-menu-list">
+                        <button type="button" role="menuitem" className="olu-menu-item" onClick={toggleTheme}>
+                            <span className="olu-menu-label">
+                                {isDark ? <Moon size={18} aria-hidden="true" /> : <Sun size={18} aria-hidden="true" />}
+                                Dark mode
+                            </span>
+                            <span className={`olu-switch ${isDark ? 'on' : ''}`} aria-hidden="true" />
+                        </button>
+                        <button type="button" role="menuitem" className="olu-menu-item danger" onClick={logout}>
+                            <span className="olu-menu-label">
+                                <LogOut size={18} aria-hidden="true" />
+                                Log out
+                            </span>
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

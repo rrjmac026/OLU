@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import AppLayout from '../layouts/app-layout';
 import HeroSky from '../components/hero-sky';
 import { prettyDate, typeInfo } from '../lib/calendar';
@@ -13,6 +14,8 @@ import MemorySlideshow from '../components/memory-slideshow';
 import type { MemorySlide } from '../components/memory-slideshow';
 import HomePlayer from '../components/home-player';
 import type { PlayerSong } from '../components/home-player';
+// 👇 NEW: adjust the path to wherever you placed the file (next to your main CSS)
+import '../../css/home-animations.css';
 
 type Props = {
     checkin_today: { mood: string } | null;
@@ -24,6 +27,14 @@ type Props = {
     songs?: PlayerSong[];
     memory_photos?: MemorySlide[];
 };
+
+// 👇 NEW: falling petals (same recipe as the Memories page)
+const PETALS = Array.from({ length: 16 }, (_, i) => ({
+    left: `${(i * 7 + 3) % 100}%`,
+    delay: `${(i * 1.7) % 12}s`,
+    dur: `${14 + ((i * 3) % 9)}s`,
+    size: `${0.55 + ((i * 5) % 7) / 12}rem`,
+}));
 
 export default function Home({
     checkin_today,
@@ -64,6 +75,17 @@ export default function Home({
     return (
         <AppLayout title="Home">
             <div className="home">
+                {/* 👇 NEW: petals */}
+                <div className="home-petals" aria-hidden="true">
+                    {PETALS.map((p, i) => (
+                        <span
+                            key={i}
+                            className="home-petal"
+                            style={{ left: p.left, '--delay': p.delay, '--dur': p.dur, '--size': p.size } as CSSProperties}
+                        />
+                    ))}
+                </div>
+
                 {/* Hero */}
                 <section className="home-hero">
                     <HeroSky />
@@ -227,7 +249,8 @@ export default function Home({
                                 <span className="home-heart" aria-hidden="true">♥</span> A Little Reminder
                             </h2>
                         </div>
-                        <blockquote>
+                        {/* key re-triggers the fade-in whenever the quote changes */}
+                        <blockquote key={compliment ?? 'default'}>
                             &ldquo;{compliment ?? "You're doing better than you think."}&rdquo;
                         </blockquote>
                         <div className="home-divider" aria-hidden="true">
