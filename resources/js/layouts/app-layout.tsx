@@ -6,7 +6,6 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import ProfileMenu from '../components/profile-menu';
-import QuickSearch from '../components/quick-search';
 import Sidebar from '../components/sidebar';
 import type { SharedProps } from '../types/olu';
 import { Bell } from 'lucide-react';

@@ -1,0 +1,228 @@
+/* ============ Chat (ch-) ============ */
+@keyframes ch-rise   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes ch-pop    { from { opacity: 0; transform: translateY(10px) scale(.86); } to { opacity: 1; transform: none; } }
+@keyframes ch-fade   { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes ch-ring   { 0%, 100% { box-shadow: 0 0 0 4px var(--ou-accent-soft); } 50% { box-shadow: 0 0 0 9px transparent; } }
+@keyframes ch-beat   { 0%, 60%, 100% { transform: scale(1); } 15% { transform: scale(1.2); } 30% { transform: scale(1); } 45% { transform: scale(1.14); } }
+@keyframes ch-bounce { 0%, 80%, 100% { transform: translateY(0); opacity: .45; } 40% { transform: translateY(-4px); opacity: 1; } }
+@keyframes ch-wave   { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(16deg); } 40% { transform: rotate(-10deg); } 60% { transform: rotate(14deg); } 80% { transform: rotate(-6deg); } }
+
+:root .olu-shell .ch {
+    position: relative; display: flex; flex-direction: column;
+    height: calc(100dvh - 7.5rem); min-height: 420px;
+    width: 100%; max-width: 980px; margin: 0 auto; overflow: hidden;
+    background: var(--ou-card); border: 1px solid var(--ou-border); border-radius: 24px;
+    backdrop-filter: blur(8px);
+    animation: ch-rise .6s ease backwards;
+}
+
+/* ---- header ---- */
+:root .olu-shell .ch-head {
+    display: flex; align-items: center; gap: .85rem; padding: .9rem 1.4rem;
+    background: var(--ou-glass); border-bottom: 1px solid var(--ou-border);
+}
+.ch-avatar {
+    display: grid; place-items: center; flex: none; width: 2.7rem; height: 2.7rem; border-radius: 50%;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--ou-accent) 70%, #fff), var(--ou-accent));
+    color: var(--ou-on-accent); font-weight: 600;
+    animation: ch-ring 3.4s ease-in-out infinite;
+}
+.ch-who { display: flex; flex-direction: column; gap: .1rem; min-width: 0; flex: 1; }
+.ch-who strong { font-weight: 500; font-size: 1.05rem; }
+.ch-who small { color: var(--ou-muted); min-height: 1rem; }
+.ch-head-heart { color: var(--ou-accent); fill: var(--ou-accent-soft); animation: ch-beat 2.8s ease-in-out infinite; }
+
+.ch-typing-text { color: var(--ou-accent); font-size: .8rem; }
+.ch-typing-text i {
+    display: inline-block; width: .28rem; height: .28rem; margin-left: .15rem; border-radius: 50%;
+    background: currentColor; animation: ch-bounce 1.2s infinite;
+}
+.ch-typing-text i:nth-child(2) { animation-delay: .15s; }
+.ch-typing-text i:nth-child(3) { animation-delay: .3s; }
+
+/* ---- list ---- */
+:root .olu-shell .ch-list {
+    flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+    padding: 1.2rem 1.4rem 1rem; scrollbar-width: thin; scrollbar-color: var(--ou-border) transparent;
+    background:
+        radial-gradient(40% 35% at 90% 5%, var(--ou-accent-soft), transparent 70%),
+        radial-gradient(35% 30% at 5% 95%, var(--ou-accent-soft), transparent 70%);
+}
+.ch-older {
+    align-self: center; margin-bottom: .6rem; padding: .35rem 1rem; border: 1px solid var(--ou-border); border-radius: 999px;
+    background: var(--ou-card-2); color: var(--ou-accent); font: inherit; font-size: .82rem; cursor: pointer;
+    transition: background .15s, transform .15s;
+}
+.ch-older:hover { background: var(--ou-accent-soft); transform: translateY(-1px); }
+
+/* date divider */
+.ch-day { display: flex; align-items: center; gap: .8rem; margin: 1rem 0 .6rem; color: var(--ou-muted); font-size: .78rem; }
+.ch-day::before, .ch-day::after { content: ''; flex: 1; height: 1px; background: var(--ou-border); }
+.ch-day span { padding: .2rem .8rem; border-radius: 999px; background: var(--ou-card-2); border: 1px solid var(--ou-border); }
+
+/* empty state */
+.ch-empty { display: flex; flex-direction: column; align-items: center; gap: .4rem; margin: auto; text-align: center; }
+.ch-empty-emoji { font-size: 3rem; display: inline-block; transform-origin: 70% 70%; animation: ch-wave 2.4s ease-in-out infinite; }
+.ch-empty strong { font-weight: 500; font-size: 1.1rem; }
+.ch-empty small { color: var(--ou-muted); }
+.ch-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: .8rem; }
+.ch-chips button {
+    padding: .5rem 1.1rem; border: 1px solid var(--ou-border); border-radius: 999px; background: var(--ou-card-2);
+    color: var(--ou-text); font: inherit; font-size: .9rem; cursor: pointer;
+    transition: transform .15s, border-color .15s, background .15s;
+}
+.ch-chips button:hover { transform: translateY(-2px); border-color: var(--ou-accent); background: var(--ou-accent-soft); }
+
+/* ---- rows + bubbles ---- */
+.ch-row { display: flex; flex-direction: column; max-width: 72%; margin-top: .15rem; }
+.ch-row.first { margin-top: .75rem; }
+.ch-row.mine { align-self: flex-end; align-items: flex-end; }
+.ch-row.theirs { align-self: flex-start; align-items: flex-start; }
+.ch-line { display: flex; align-items: flex-end; gap: .5rem; max-width: 100%; }
+
+.ch-avatar-sm, .ch-avatar-gap { flex: none; width: 1.7rem; height: 1.7rem; }
+.ch-avatar-sm {
+    display: grid; place-items: center; border-radius: 50%; font-size: .72rem; font-weight: 600;
+    background: var(--ou-accent-soft); color: var(--ou-accent); border: 1px solid var(--ou-border);
+}
+
+:root .olu-shell .ch-bubble {
+    padding: .6rem 1rem; border: 0; border-radius: 1.25rem; font: inherit; line-height: 1.45;
+    text-align: left; white-space: pre-wrap; overflow-wrap: anywhere; cursor: pointer; color: inherit;
+    transition: transform .15s, filter .15s, box-shadow .15s;
+}
+:root .olu-shell .ch-bubble:hover { transform: translateY(-1px); }
+:root .olu-shell .ch-row.open .ch-bubble { box-shadow: 0 0 0 3px var(--ou-accent-soft); }
+
+:root .olu-shell .ch-row.mine .ch-bubble {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--ou-accent) 78%, #fff), var(--ou-accent));
+    color: var(--ou-on-accent); border-bottom-right-radius: .4rem;
+    box-shadow: 0 8px 20px -14px var(--ou-accent);
+}
+:root .olu-shell .ch-row.mine:not(.first) .ch-bubble { border-top-right-radius: .4rem; }
+:root .olu-shell .ch-row.theirs .ch-bubble {
+    background: var(--ou-card-2); color: var(--ou-text); border: 1px solid var(--ou-border); border-bottom-left-radius: .4rem;
+}
+:root .olu-shell .ch-row.theirs:not(.first) .ch-bubble { border-top-left-radius: .4rem; }
+
+:root .olu-shell .ch-bubble.unsent {
+    background: transparent; color: var(--ou-muted); border: 1px dashed var(--ou-border);
+    font-style: italic; cursor: default; box-shadow: none; transform: none;
+}
+
+/* new messages pop in */
+.ch-row.fresh .ch-bubble { animation: ch-pop .38s cubic-bezier(.2, .9, .3, 1.25) backwards; }
+.ch-row.mine.fresh .ch-bubble { transform-origin: bottom right; }
+.ch-row.theirs.fresh .ch-bubble { transform-origin: bottom left; }
+
+/* typing bubble */
+:root .olu-shell .ch-typing-bubble { display: inline-flex; align-items: center; gap: .3rem; padding: .8rem 1rem; cursor: default; animation: ch-pop .3s ease backwards; }
+.ch-typing-bubble i { width: .45rem; height: .45rem; border-radius: 50%; background: var(--ou-muted); animation: ch-bounce 1.2s infinite; }
+.ch-typing-bubble i:nth-child(2) { animation-delay: .15s; }
+.ch-typing-bubble i:nth-child(3) { animation-delay: .3s; }
+
+/* actions pill */
+.ch-actions {
+    display: flex; flex-wrap: wrap; gap: .25rem; margin-top: .4rem; padding: .25rem;
+    border-radius: 999px; background: var(--ou-side); border: 1px solid var(--ou-border);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .5); animation: ch-fade .18s ease;
+}
+.ch-actions button {
+    display: inline-flex; align-items: center; gap: .35rem; padding: .35rem .8rem; border: 0; border-radius: 999px;
+    background: transparent; color: var(--ou-text); font: inherit; font-size: .8rem; cursor: pointer;
+    transition: background .15s, color .15s;
+}
+.ch-actions button:hover { background: var(--ou-accent-soft); color: var(--ou-accent); }
+.ch-actions button.danger:hover { background: rgba(255, 77, 109, .14); color: #ff6b81; }
+
+/* meta line */
+.ch-meta { display: flex; align-items: center; gap: .35rem; margin-top: .25rem; padding: 0 .35rem; font-size: .72rem; color: var(--ou-muted); }
+.ch-row.theirs .ch-meta { padding-left: 2.2rem; }
+.ch-status { display: inline-flex; align-items: center; gap: .2rem; margin-left: .25rem; }
+.ch-status.seen { color: var(--ou-accent); }
+
+/* jump to latest */
+.ch-jump {
+    position: absolute; right: 1.4rem; bottom: 5.6rem; z-index: 4;
+    display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border: 1px solid var(--ou-border); border-radius: 50%;
+    background: var(--ou-side); color: var(--ou-accent); cursor: pointer;
+    box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .55); animation: ch-pop .25s ease;
+    transition: transform .15s, background .15s;
+}
+.ch-jump:hover { transform: translateY(-2px); background: var(--ou-accent-soft); }
+.ch-jump-count {
+    position: absolute; top: -.35rem; right: -.35rem; display: grid; place-items: center; min-width: 1.2rem; height: 1.2rem;
+    padding: 0 .3rem; border-radius: 999px; background: #ff4d6d; color: #fff; font-size: .7rem; font-weight: 600;
+}
+
+.ch-error { margin: 0; padding: .4rem 1.4rem; color: #ff6b81; font-size: .85rem; }
+
+/* ---- composer ---- */
+:root .olu-shell .ch-composer { padding: .8rem 1.2rem 1rem; border-top: 1px solid var(--ou-border); background: var(--ou-glass); }
+.ch-editing {
+    display: flex; align-items: center; gap: .5rem; margin-bottom: .55rem; padding: .4rem .5rem .4rem .9rem;
+    border-left: 3px solid var(--ou-accent); border-radius: 10px; background: var(--ou-accent-soft);
+    color: var(--ou-accent); font-size: .85rem; animation: ch-fade .18s ease;
+}
+.ch-editing span { flex: 1; }
+.ch-editing button {
+    display: grid; place-items: center; width: 1.7rem; height: 1.7rem; padding: 0; border: 0; border-radius: 50%;
+    background: transparent; color: inherit; cursor: pointer;
+}
+.ch-editing button:hover { background: var(--ou-accent-soft); }
+
+.ch-box {
+    position: relative; display: flex; align-items: flex-end; gap: .4rem; padding: .35rem .4rem .35rem .5rem;
+    border-radius: 26px; background: var(--ou-card-2); border: 1px solid var(--ou-border);
+    transition: border-color .15s, box-shadow .15s;
+}
+.ch-box:focus-within { border-color: var(--ou-accent); box-shadow: 0 0 0 3px var(--ou-accent-soft); }
+
+:root .olu-shell .ch-box textarea {
+    flex: 1; min-width: 0; resize: none; max-height: 8rem; padding: .55rem .4rem;
+    border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important;
+    outline: 0; font: inherit; line-height: 1.4; color: var(--ou-text);
+}
+:root .olu-shell .ch-box textarea::placeholder { color: var(--ou-muted); }
+
+.ch-icon-btn {
+    display: grid; place-items: center; width: 2.3rem; height: 2.3rem; padding: 0; border: 0; border-radius: 50%;
+    background: transparent; color: var(--ou-muted); cursor: pointer; transition: background .15s, color .15s, transform .15s;
+}
+.ch-icon-btn:hover, .ch-icon-btn.on { background: var(--ou-accent-soft); color: var(--ou-accent); transform: scale(1.06); }
+
+.ch-emoji-wrap { position: relative; }
+.ch-emoji-pop {
+    position: absolute; left: 0; bottom: calc(100% + .7rem); z-index: 10;
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: .15rem; padding: .5rem;
+    border-radius: 18px; background: var(--ou-side); border: 1px solid var(--ou-border);
+    box-shadow: 0 18px 40px -14px rgba(0, 0, 0, .6); animation: ch-pop .2s ease; transform-origin: bottom left;
+}
+.ch-emoji-pop button {
+    display: grid; place-items: center; width: 2.1rem; height: 2.1rem; padding: 0; border: 0; border-radius: 10px;
+    background: transparent; font-size: 1.25rem; cursor: pointer; transition: background .12s, transform .12s;
+}
+.ch-emoji-pop button:hover { background: var(--ou-accent-soft); transform: scale(1.2); }
+
+.ch-count { align-self: center; padding: 0 .3rem; font-size: .72rem; color: var(--ou-muted); }
+
+.ch-send {
+    display: grid; place-items: center; flex: none; width: 2.5rem; height: 2.5rem; padding: 0; border: 0; border-radius: 50%;
+    background: linear-gradient(135deg, #ff9ccd, var(--ou-accent)); color: var(--ou-on-accent); cursor: pointer;
+    box-shadow: 0 8px 20px -8px var(--ou-accent); transition: transform .15s, box-shadow .15s, opacity .15s;
+}
+.ch-send:hover:not(:disabled) { transform: translateY(-2px) rotate(-8deg); box-shadow: 0 12px 24px -8px var(--ou-accent); }
+.ch-send:active:not(:disabled) { transform: scale(.94); }
+.ch-send:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+
+/* ---- responsive ---- */
+@media (max-width: 768px) {
+    :root .olu-shell .ch { height: calc(100dvh - 6.5rem); border-radius: 18px; }
+    .ch-row { max-width: 86%; }
+    .ch-emoji-pop { grid-template-columns: repeat(6, 1fr); }
+}
+
+/* ---- reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    .ch, .ch *, .ch *::before, .ch *::after { animation: none !important; transition: none !important; }
+}
