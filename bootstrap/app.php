@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Middleware\EnsureRole;
@@ -17,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+
+        // Trust Render's reverse proxy to detect HTTPS.
+        $middleware->trustProxies(at: '*');
 
         // Order matters: resolve the user before Inertia shares props.
         $middleware->web(append: [

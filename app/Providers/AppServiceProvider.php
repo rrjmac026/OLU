@@ -5,6 +5,7 @@ namespace App\Providers;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -14,19 +15,18 @@ use App\Support\ActivityNotifier;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
+        // Force HTTPS URL generation in production.
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Password::defaults(fn () => Password::min(10));
 
         RateLimiter::for('login', function (Request $request) {
@@ -42,9 +42,6 @@ class AppServiceProvider extends ServiceProvider
         ActivityNotifier::register();
     }
 
-    /**
-     * Configure default behaviors for production-ready applications.
-     */
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
