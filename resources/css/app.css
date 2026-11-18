@@ -7,6 +7,8 @@
 @import './albums.css';
 @import './album-page.css';
 @import './notifications.css';
+@import './garden.css';
+@import './farm.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

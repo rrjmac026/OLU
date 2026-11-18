@@ -19,6 +19,7 @@ import {
     NotebookPen,
     Settings,
     Sprout,
+    Tractor,
     Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -68,13 +69,6 @@ export const navSections: NavSection[] = [
         items: [
             { href: '/comfort', label: 'Comfort', icon: HeartHandshake },
             { href: '/music', label: 'Music', icon: Music },
-            { href: '/garden', label: 'Garden', icon: Sprout },
-            {
-                href: '/playroom',
-                label: 'Playroom',
-                icon: Gamepad2,
-                matches: ['/playroom', '/quiz', '/wheel', '/games', '/puzzle', '/achievements'],
-            },
             { href: '/backgrounds', label: 'Backgrounds', icon: Image },
         ],
     },

@@ -504,47 +504,6 @@ a.olu-btn {
 .playroom-tile:hover { filter: brightness(.97); }
 .playroom-icon { font-size: 1.8rem; }
 .playroom-blurb { font-size: .9rem; opacity: .75; }
-/* Garden */
-.garden { max-width: 520px; margin-inline: auto; text-align: center; }
-.garden-drops { font-size: 1.1rem; margin: .25rem 0; }
-.garden-note { opacity: .7; font-size: .9rem; margin: 0 0 1rem; }
-.garden-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
-.garden-plot {
-  aspect-ratio: 1;
-  border: 1px solid var(--olu-border, #ddd);
-  border-radius: .75rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: .25rem;
-  background: var(--olu-card, #fff);
-  color: inherit;
-}
-.garden-plot.empty { font-size: 1.5rem; opacity: .5; cursor: pointer; }
-.garden-plot.empty:hover { opacity: .8; }
-.garden-emoji { font-size: 2rem; line-height: 1; }
-.garden-actions { display: flex; gap: .25rem; }
-.garden-mini {
-  border: 1px solid var(--olu-border, #ddd);
-  border-radius: .5rem;
-  background: transparent;
-  color: inherit;
-  font-size: .8rem;
-  padding: .1rem .35rem;
-  cursor: pointer;
-}
-.garden-mini:disabled { opacity: .35; cursor: default; }
-.garden-picker { margin-top: 1rem; }
-.garden-kinds { display: flex; justify-content: center; gap: .5rem; flex-wrap: wrap; }
-.garden-kind {
-  font-size: 1.6rem;
-  border: 1px solid var(--olu-border, #ddd);
-  border-radius: .75rem;
-  background: var(--olu-card, #fff);
-  padding: .25rem .5rem;
-  cursor: pointer;
-}
 
 .home-play, .home-skip, .home-tool { border: 0; cursor: pointer; font: inherit; }
 .home-skip, .home-tool { background: none; color: var(--ou-text); text-decoration: none; display: grid; place-items: center; }

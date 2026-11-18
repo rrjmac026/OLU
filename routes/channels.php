@@ -23,3 +23,4 @@ Broadcast::channel('memorymatch.{a}.{b}', function ($user, int $a, int $b) {
 });
 
 Broadcast::channel('questions', fn ($user) => true);
+Broadcast::channel('farm', fn ($user) => (bool) $user->is_active);

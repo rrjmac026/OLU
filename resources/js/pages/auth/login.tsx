@@ -155,7 +155,7 @@ export default function Login() {
 
                 <div className="lg-body">
                     <h2 className="lg-title">
-                        Welcome back, <span>love</span> ♡
+                        Hi, <span>lang</span> ♡
                     </h2>
                     <p className="lg-sub">Log in to our little universe.</p>
 

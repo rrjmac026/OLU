@@ -21,13 +21,6 @@ use App\Http\Controllers\SongController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\QuestionController;
-use App\Http\Controllers\QuizController;
-use App\Http\Controllers\WheelController;
-use App\Http\Controllers\TicTacToeController;
-use App\Http\Controllers\MemoryMatchController;
-use App\Http\Controllers\PuzzleController;
-use App\Http\Controllers\AchievementController;
-use App\Http\Controllers\GardenController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AlbumController;
@@ -164,52 +157,6 @@ Route::middleware('auth.session')->group(function () {
     Route::get('questions', [QuestionController::class, 'index']);
     Route::post('questions', [QuestionController::class, 'store']);
     Route::delete('questions/{answer}', [QuestionController::class, 'destroy'])->whereNumber('answer');
-
-    // ----- Playroom: couple quiz -----
-    Route::get('quiz', [QuizController::class, 'index']);
-    Route::post('quiz/questions', [QuizController::class, 'storeQuestion']);
-    Route::delete('quiz/questions/{question}', [QuizController::class, 'destroyQuestion'])->whereNumber('question');
-    Route::post('quiz/questions/{question}/guess', [QuizController::class, 'guess'])->whereNumber('question');
-    Route::post('quiz/reset', [QuizController::class, 'reset']);
-
-    // ----- Playroom: random wheel (admin edits items) -----
-    Route::get('wheel', [WheelController::class, 'index']);
-    Route::middleware('role:admin')->group(function () {
-        Route::post('wheel/items', [WheelController::class, 'store']);
-        Route::patch('wheel/items/{item}', [WheelController::class, 'toggle'])->whereNumber('item');
-        Route::delete('wheel/items/{item}', [WheelController::class, 'destroy'])->whereNumber('item');
-    });
-
-    // Games
-    Route::get('/games/tictactoe', [TicTacToeController::class, 'index'])->name('games.tictactoe');
-    Route::post('/games/tictactoe', [TicTacToeController::class, 'store']);
-    Route::post('/games/tictactoe/{game}/move', [TicTacToeController::class, 'move'])->whereNumber('game');
-
-    
-
-    Route::get('/games/memorymatch', [MemoryMatchController::class, 'index'])->name('games.memorymatch');
-    Route::post('/games/memorymatch', [MemoryMatchController::class, 'store']);
-    Route::post('/games/memorymatch/{game}/flip', [MemoryMatchController::class, 'flip'])->whereNumber('game');
-
-    // Daily puzzle
-    Route::get('/puzzle', [PuzzleController::class, 'index'])->name('puzzle');
-    Route::post('/puzzle/guess', [PuzzleController::class, 'guess']);
-    Route::post('/puzzle/reveal', [PuzzleController::class, 'reveal']);
-    Route::middleware('role:admin')->group(function () {
-        Route::post('/puzzle/items', [PuzzleController::class, 'store']);
-        Route::patch('/puzzle/items/{item}', [PuzzleController::class, 'toggle']);
-        Route::delete('/puzzle/items/{item}', [PuzzleController::class, 'destroy']);
-    });
-    
-    Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements');
-
-    Route::get('/playroom', fn () => Inertia::render('playroom/index'))->name('playroom'); 
-
-    // Garden
-    Route::get('/garden', [GardenController::class, 'index'])->name('garden');
-    Route::post('/garden/plant', [GardenController::class, 'plant']);
-    Route::post('/garden/plants/{plant}/water', [GardenController::class, 'water'])->whereNumber('plant');
-    Route::delete('/garden/plants/{plant}', [GardenController::class, 'destroy'])->whereNumber('plant');
 
     Route::get('albums', [AlbumController::class, 'index']);
 

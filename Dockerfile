@@ -15,7 +15,8 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction --ignore-platform-reqs
 COPY . .
-RUN composer dump-autoload --no-dev --optimize --no-scripts
+RUN rm -f bootstrap/cache/*.php \
+    && composer dump-autoload --no-dev --optimize --no-scripts
 
 
 # ---------- Frontend build (Vite + Wayfinder needs PHP) ----------
@@ -23,7 +24,22 @@ FROM base AS assets
 RUN apk add --no-cache nodejs npm
 COPY --from=vendor /app /var/www/html
 ENV APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-RUN npm ci && npm run build
+ARG VITE_REVERB_APP_KEY
+ARG VITE_REVERB_HOST=localhost
+ARG VITE_REVERB_PORT=8080
+ARG VITE_REVERB_SCHEME=http
+ENV VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY \
+    VITE_REVERB_HOST=$VITE_REVERB_HOST \
+    VITE_REVERB_PORT=$VITE_REVERB_PORT \
+    VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME
+ENV CACHE_STORE=array \
+    SESSION_DRIVER=array \
+    DB_CONNECTION=sqlite
+RUN rm -f bootstrap/cache/*.php \
+    && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && php artisan package:discover --ansi \
+    && php artisan wayfinder:generate --with-form
+RUN rm -f package-lock.json && npm install --no-audit --no-fund && npm run build
 
 
 # ---------- Final image: nginx + php-fpm + supervisord ----------
@@ -43,8 +59,9 @@ RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh /etc/supervisord.conf /
 COPY --from=vendor /app /var/www/html
 COPY --from=assets /var/www/html/public/build /var/www/html/public/build
 
-RUN php artisan package:discover --ansi \
+RUN rm -f bootstrap/cache/*.php \
     && mkdir -p storage/app/private storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && php artisan package:discover --ansi \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwX storage bootstrap/cache
 
