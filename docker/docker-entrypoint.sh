@@ -3,23 +3,22 @@ set -e
 
 cd /var/www/html
 
-# Make sure storage folders exist (matters when a volume is mounted over storage/)
 mkdir -p storage/app/private storage/framework/cache storage/framework/sessions \
          storage/framework/views storage/logs bootstrap/cache
 
-# Wait for MySQL
+# Wait for the database (mysql or pgsql, chosen by DB_CONNECTION)
 if [ -n "$DB_HOST" ]; then
-  echo "Waiting for database at $DB_HOST:${DB_PORT:-3306}..."
+  echo "Waiting for database at $DB_HOST..."
   tries=0
   until php -r '
     try {
-      new PDO(
-        "mysql:host=".getenv("DB_HOST").";port=".(getenv("DB_PORT") ?: 3306).";dbname=".getenv("DB_DATABASE"),
-        getenv("DB_USERNAME"),
-        getenv("DB_PASSWORD")
-      );
-    } catch (Throwable $e) { exit(1); }
-  ' 2>/dev/null; do
+      $driver = getenv("DB_CONNECTION") ?: "mysql";
+      $port = getenv("DB_PORT") ?: ($driver === "pgsql" ? 5432 : 3306);
+      $dsn = $driver.":host=".getenv("DB_HOST").";port=".$port.";dbname=".getenv("DB_DATABASE");
+      if ($driver === "pgsql") { $dsn .= ";sslmode=".(getenv("DB_SSLMODE") ?: "prefer"); }
+      new PDO($dsn, getenv("DB_USERNAME"), getenv("DB_PASSWORD"));
+    } catch (Throwable $e) { fwrite(STDERR, $e->getMessage()."\n"); exit(1); }
+  '; do
     tries=$((tries + 1))
     if [ "$tries" -ge 30 ]; then
       echo "Database not reachable after 30 tries, giving up."
@@ -30,12 +29,10 @@ if [ -n "$DB_HOST" ]; then
   echo "Database is up."
 fi
 
-# Cache config/routes/views using the runtime .env values
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Optional steps controlled by env vars
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
   php artisan migrate --force
 fi
@@ -44,7 +41,6 @@ if [ "${RUN_SEED:-false}" = "true" ]; then
   php artisan db:seed --force
 fi
 
-# artisan ran as root, so hand ownership back to www-data
 chown -R www-data:www-data storage bootstrap/cache
 
 exec "$@"

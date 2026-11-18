@@ -4,7 +4,7 @@
 FROM php:8.3-fpm-alpine AS base
 
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN install-php-extensions pdo_mysql bcmath pcntl opcache exif intl zip
+RUN install-php-extensions pdo_mysql pdo_pgsql bcmath pcntl opcache exif intl zip
 
 WORKDIR /var/www/html
 
@@ -66,7 +66,6 @@ RUN rm -f bootstrap/cache/*.php \
     && chmod -R ug+rwX storage bootstrap/cache
 
 # NOTE: do NOT run storage:link - uploads stay private on purpose.
-
 EXPOSE 80 8080
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
