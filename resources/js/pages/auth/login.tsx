@@ -212,6 +212,11 @@ export default function Login() {
                     <Link href="/" className="lg-back">
                         ← Back to our universe
                     </Link>
+                    <nav className="lg-legal" aria-label="Legal">
+                        <Link href="/privacy-policy">Privacy Policy</Link>
+                        <span aria-hidden="true">•</span>
+                        <Link href="/terms-of-service">Terms of Service</Link>
+                    </nav>
                 </div>
             </form>
         </GuestLayout>

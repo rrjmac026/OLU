@@ -198,6 +198,12 @@ export default function Welcome({ background }: Props) {
                             <span>Enter our universe</span>
                             <i aria-hidden="true">→</i>
                         </Link>
+
+                        <nav className="wl-legal" aria-label="Legal">
+                            <Link href="/privacy-policy">Privacy Policy</Link>
+                            <span aria-hidden="true">•</span>
+                            <Link href="/terms-of-service">Terms of Service</Link>
+                        </nav>
                     </main>
                 </div>
             </div>

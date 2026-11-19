@@ -40,6 +40,11 @@ Route::get('backdrop/meta', [BackgroundController::class, 'meta']);
 Route::get('login', [AuthController::class, 'create'])->name('login');
 Route::post('login', [AuthController::class, 'store']);
 
+Route::get('privacy-policy', fn () => Inertia::render('legal/privacy-policy'))
+    ->name('privacy.policy');
+Route::get('terms-of-service', fn () => Inertia::render('legal/terms-of-service'))
+    ->name('terms.service');
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated

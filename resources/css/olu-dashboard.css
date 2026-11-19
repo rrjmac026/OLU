@@ -39,7 +39,7 @@
 /* ============ Shell: full-height sidebar + content column ============ */
 :root .olu-shell {
     position: relative;
-    display: flex; flex-direction: row; min-height: 100vh;
+    display: flex; flex-direction: row; min-height: 100vh; min-height: 100dvh;
     color: var(--ou-text);
     background:
         radial-gradient(55% 45% at 75% 0%, rgba(140, 90, 170, .28), transparent 70%),
@@ -65,7 +65,7 @@
 
 /* ---- Sidebar ---- */
 :root .olu-shell .olu-sidebar {
-    position: sticky; top: 0; align-self: flex-start; flex: none; width: 15.2rem; height: 100vh;
+    position: sticky; top: 0; align-self: flex-start; flex: none; width: 15.2rem; height: 100vh; height: 100dvh;
     padding: 1.2rem 1rem .8rem; overflow-y: auto; scrollbar-width: none;
     background: linear-gradient(180deg, rgba(255,255,255,.03), transparent), var(--ou-side);
     border-right: 1px solid var(--ou-border); color: var(--ou-text);
@@ -87,7 +87,7 @@
 /* ---- Topbar ---- */
 :root .olu-shell .olu-topbar {
     position: sticky; top: 0; z-index: 20;
-    height: auto; display: flex; align-items: center; gap: 1rem;
+    height: auto; min-height: 56px; display: flex; align-items: center; gap: 1rem;
     padding: .8rem 1.6rem;
     background: color-mix(in srgb, var(--ou-bg) 72%, transparent);
     backdrop-filter: blur(14px);
@@ -95,7 +95,12 @@
     border: 0; border-bottom: 1px solid var(--ou-border);
     color: var(--ou-text);
 }
-:root .olu-shell .olu-burger { color: var(--ou-text); }
+:root .olu-shell .olu-burger {
+    display: none; align-items: center; justify-content: center; flex: none;
+    width: 2.75rem; height: 2.75rem; padding: 0;
+    border: 0; background: transparent; color: var(--ou-text); font-size: 1.4rem; cursor: pointer;
+}
+:root .olu-shell .olu-backdrop { display: none; }
 .olu-bell { position: relative; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border: 0; background: transparent; color: var(--ou-text); cursor: pointer; }
 .olu-bell-dot { position: absolute; top: .35rem; right: .45rem; width: .5rem; height: .5rem; border-radius: 50%; background: var(--ou-accent); }
 :root .olu-shell .olu-avatar { background: var(--ou-accent); color: var(--ou-on-accent); }
@@ -275,11 +280,7 @@
     .home-row-a, .home-row-b { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
-    :root .olu-shell .olu-sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 25; height: 100vh; transform: translateX(-100%); transition: transform .2s; }
-    :root .olu-shell .olu-sidebar.open { transform: none; }
-    .olu-backdrop.show { inset: 0; }
-    :root .olu-shell .olu-main { padding: .25rem 1rem 1rem; }
-    :root .olu-shell .olu-topbar { padding: .8rem 1rem; }
+    :root .olu-shell .olu-burger { display: inline-flex; }
 }
 @media (max-width: 560px) {
     .home-quick, .home-memory, .home-life { grid-template-columns: 1fr; }
