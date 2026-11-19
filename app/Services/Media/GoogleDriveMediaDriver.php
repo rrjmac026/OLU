@@ -32,7 +32,7 @@ class GoogleDriveMediaDriver implements MediaDriver
 
     public function putFromPath(string $absolutePath, string $mime, string $folder): string
     {
-        $parent = $this->setting('folder_id');
+        $parent = $this->subfolder($folder);
         $extension = (new File($absolutePath))->guessExtension()
             ?: (pathinfo($absolutePath, PATHINFO_EXTENSION) ?: 'bin');
         $name = Str::slug($folder).'-'.Str::uuid().'.'.$extension;
@@ -153,6 +153,40 @@ class GoogleDriveMediaDriver implements MediaDriver
         return $response->json('id');
     }
 
+    /** Get (or create once) a subfolder like "Memories" inside the app's root folder. */
+    private function subfolder(string $folder): string
+    {
+        $root = $this->setting('folder_id');
+        $name = Str::headline(explode('/', $folder)[0]);
+        $key = 'media.drive.folder.'.md5($root.'|'.$name);
+
+        return Cache::store('file')->rememberForever($key, function () use ($root, $name) {
+            $q = "'{$root}' in parents and name = '".str_replace("'", "\\'", $name)."' "
+                ."and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
+
+            $found = $this->call(fn (PendingRequest $http) => $http->get(self::API, [
+                'q' => $q,
+                'fields' => 'files(id)',
+                'pageSize' => 1,
+            ]));
+
+            if ($found->successful() && ($id = $found->json('files.0.id'))) {
+                return $id;
+            }
+
+            $created = $this->call(fn (PendingRequest $http) => $http->post(self::API.'?fields=id', [
+                'name' => $name,
+                'mimeType' => 'application/vnd.google-apps.folder',
+                'parents' => [$root],
+            ]));
+
+            if (! $created->successful() || ! $created->json('id')) {
+                throw new RuntimeException('Could not create the "'.$name.'" folder in Drive.');
+            }
+
+            return $created->json('id');
+        });
+    }
     // ---------- internals ----------
 
     /** Runs a request; if Google says the token is stale (401), refreshes it once and retries. */
