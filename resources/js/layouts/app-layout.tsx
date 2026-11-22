@@ -7,6 +7,7 @@ import '../../css/responsive.css';
 import '../../css/settings.css';
 import '../../css/admin.css';
 import { Head, usePage } from '@inertiajs/react';
+import { Menu } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import ChatBubble from '../components/chat-bubble';
@@ -14,7 +15,7 @@ import NotificationBell from '../components/notification-bell';
 import ProfileMenu from '../components/profile-menu';
 import Sidebar from '../components/sidebar';
 import type { SharedProps } from '../types/olu';
-import'../../css/welcome.css';
+import '../../css/welcome.css';
 
 
 type Props = {
@@ -43,7 +44,7 @@ export default function AppLayout({ title, children }: Props) {
                 <div className="olu-content">
                     <header className="olu-topbar">
                         <button type="button" className="olu-burger" aria-label="Toggle menu" onClick={() => setSidebarOpen((v) => !v)}>
-                            â˜°
+                            <Menu size={22} aria-hidden="true" />
                         </button>
                         <div className="olu-topbar-spacer" />
                         <NotificationBell />
@@ -59,4 +60,3 @@ export default function AppLayout({ title, children }: Props) {
         </>
     );
 }
-
