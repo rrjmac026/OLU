@@ -1,0 +1,513 @@
+/* ==========================================================================
+   RESPONSIVE - Step 1: drawer, backdrop, chat button clearance
+   Rules use `.olu.olu-shell` so they win over the older rules
+   regardless of import order. Everything is inside @media.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* ---- Drawer: pinned top to bottom, above everything ---- */
+    :root .olu.olu-shell .olu-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 70;
+        box-sizing: border-box;
+        width: min(15.2rem, 85vw);
+        height: auto;
+        max-height: none;
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        transform: translateX(-100%);
+        transition: transform .2s ease;
+    }
+
+    :root .olu.olu-shell .olu-sidebar.open {
+        transform: none;
+    }
+
+    /* ---- Backdrop: real overlay, below the drawer, above the chat button ---- */
+    :root .olu.olu-shell .olu-backdrop.show {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        background: rgba(0, 0, 0, .45);
+    }
+
+    /* ---- Page content never hides behind the chat button / mini player ---- */
+    :root .olu.olu-shell .olu-main {
+        padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+    }
+
+    /* ---- Chat button respects the phone's bottom bar ---- */
+    :root .olu.olu-shell .olu-fab {
+        right: 1rem;
+        bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE - Shared: panel headers may wrap instead of overflowing
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    :root .olu.olu-shell .home-panel-head {
+        flex-wrap: wrap;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE - Step 3: Home page
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    :root .olu.olu-shell .home-hero {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 1.5rem;
+    }
+
+    :root .olu.olu-shell .home-row-a,
+    :root .olu.olu-shell .home-row-b {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root .olu.olu-shell .home-count {
+        width: 100%;
+        max-width: 24rem;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Root cause of the sideways overflow: grid columns must be allowed to shrink */
+    :root .olu.olu-shell .home {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root .olu.olu-shell .home,
+    :root .olu.olu-shell .home > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    :root .olu.olu-shell .home-hero-main {
+        min-width: 0;
+    }
+
+    :root .olu.olu-shell .home-hello {
+        font-size: clamp(1.9rem, 9vw, 2.6rem);
+        overflow-wrap: anywhere;
+    }
+
+    :root .olu.olu-shell .home-sub {
+        font-size: 1.05rem;
+    }
+
+    :root .olu.olu-shell .home-cta {
+        max-width: 100%;
+        box-sizing: border-box;
+        min-height: 44px;
+    }
+
+    /* Quick cards: 2 columns on tablets, text may shrink and truncate */
+    :root .olu.olu-shell .home-quick {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    :root .olu.olu-shell .home-quick-card {
+        min-width: 0;
+    }
+
+    /* Panels */
+    :root .olu.olu-shell .home-panel {
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    :root .olu.olu-shell .home-memory {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Music player row wraps instead of pushing icons off screen */
+    :root .olu.olu-shell .home-player {
+        flex-wrap: wrap;
+    }
+
+    :root .olu.olu-shell .home-player-text {
+        flex: 1 1 10rem;
+        min-width: 0;
+    }
+
+    :root .olu.olu-shell .home-player-tools {
+        align-self: auto;
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 560px) {
+    :root .olu.olu-shell .home-hero {
+        padding: 1.1rem;
+    }
+
+    :root .olu.olu-shell .home-quick,
+    :root .olu.olu-shell .home-life {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root .olu.olu-shell .home-panel {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    :root .olu.olu-shell .home-hero {
+        padding: .9rem;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE - Step 2: Music page
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    /* Hero stacks: title on top, stats below */
+    :root .olu.olu-shell .mu-hero {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Never let the page grow wider than the screen */
+    :root .olu.olu-shell .mu {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root .olu.olu-shell .mu,
+    :root .olu.olu-shell .mu > *,
+    :root .olu.olu-shell .mu-hero > *,
+    :root .olu.olu-shell .mu-grid > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Form panel and playlist stack into one column */
+    :root .olu.olu-shell .mu-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Hero text and stats */
+    :root .olu.olu-shell .mu-title {
+        font-size: clamp(1.75rem, 8vw, 2.4rem);
+        overflow-wrap: anywhere;
+    }
+
+    :root .olu.olu-shell .mu-stats {
+        width: 100%;
+        max-width: 22rem;
+        box-sizing: border-box;
+    }
+
+    :root .olu.olu-shell .mu-stats > div {
+        flex: 1;
+        padding: .8rem 1rem;
+    }
+
+    :root .olu.olu-shell .mu-stats strong {
+        font-size: clamp(1.6rem, 7vw, 2rem);
+    }
+
+    /* Form fields: full width, 16px so iOS does not zoom on focus */
+    :root .olu.olu-shell .mu-form {
+        min-width: 0;
+    }
+
+    :root .olu.olu-shell .mu-form input:not([type='file']),
+    :root .olu.olu-shell .mu-form textarea {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        font-size: 16px;
+    }
+
+    :root .olu.olu-shell .mu-two {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* "Choose file" box: text wraps instead of being cut off */
+    :root .olu.olu-shell .mu-drop {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    :root .olu.olu-shell .mu-drop-text strong {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    :root .olu.olu-shell .mu-submit {
+        justify-self: stretch;
+        min-height: 44px;
+    }
+
+    /* Playlist */
+    :root .olu.olu-shell .mu-list {
+        max-height: none;
+        padding-right: 0;
+    }
+
+    :root .olu.olu-shell .mu-song-foot {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 560px) {
+    :root .olu.olu-shell .mu-hero {
+        padding: 1.1rem;
+    }
+
+    /* Song card: play button + text on one row, controls wrap below */
+    :root .olu.olu-shell .mu-song {
+        flex-wrap: wrap;
+        gap: .65rem;
+        padding: .8rem;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    :root .olu.olu-shell .mu-song-body {
+        min-width: 0;
+        flex: 1 1 8rem;
+    }
+
+    :root .olu.olu-shell .mu-song-top strong {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    :root .olu.olu-shell .mu-ctrls {
+        flex-wrap: wrap;
+    }
+
+    /* Round icon buttons stay round and get a bigger tap area */
+    :root .olu.olu-shell .mu-ctrl {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    :root .olu.olu-shell .mu-play {
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+@media (max-width: 400px) {
+    :root .olu.olu-shell .mu-hero {
+        padding: .9rem;
+    }
+
+    :root .olu.olu-shell .mu-stats > div {
+        padding: .7rem .6rem;
+    }
+}
+/* ==========================================================================
+   RESPONSIVE - Sidebar scroll fix (mobile)
+   ========================================================================== */
+@media (max-width: 768px) {
+    :root .olu.olu-shell .olu-sidebar {
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100dvh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+    }
+
+    :root .olu.olu-shell .olu-sidebar nav {
+        min-height: 0;
+        height: auto;
+    }
+
+    :root .olu.olu-shell .olu-side-foot {
+        margin-top: 1rem;
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE - Albums page
+   ========================================================================== */
+@media (max-width: 1000px) {
+    :root .olu.olu-shell .ab,
+    :root .olu.olu-shell .ab-viewer,
+    :root .olu.olu-shell .ab-player {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root .olu.olu-shell .ab,
+    :root .olu.olu-shell .ab > *,
+    :root .olu.olu-shell .ab-left > *,
+    :root .olu.olu-shell .ab-right > *,
+    :root .olu.olu-shell .ab-viewer > *,
+    :root .olu.olu-shell .ab-player > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    :root .olu.olu-shell .ab-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root .olu.olu-shell .ab-cards.grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    :root .olu.olu-shell .ab {
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* Hero: keep the cat and moon away from the text */
+    :root .olu.olu-shell .ab-hero-main {
+        max-width: 100%;
+    }
+
+    :root .olu.olu-shell .ab-hero-main > p {
+        padding-right: 4.5rem;
+    }
+
+    :root .olu.olu-shell .ab-hero h1 {
+        overflow-wrap: anywhere;
+    }
+
+    :root .olu.olu-shell .ab-cat {
+        right: 4%;
+        bottom: 6px;
+        font-size: 2.6rem;
+    }
+
+    /* Viewer header: wrap instead of overflowing */
+    :root .olu.olu-shell .ab-v-head {
+        flex-wrap: wrap;
+        row-gap: .6rem;
+    }
+
+    :root .olu.olu-shell .ab-v-title {
+        flex: 1 1 7rem;
+    }
+
+    :root .olu.olu-shell .ab-pillbtn {
+        flex: none;
+    }
+
+    /* Stage: not taller than the screen */
+    :root .olu.olu-shell .ab-stage {
+        max-height: 72dvh;
+        width: 100%;
+    }
+
+    /* Bottom bar on the slide: song pill shrinks, buttons stay */
+    :root .olu.olu-shell .ab-song {
+        flex: 1 1 auto;
+        max-width: calc(100% - 5.5rem);
+    }
+
+    :root .olu.olu-shell .ab-song > span:not(.ab-eqb) {
+        max-width: 100%;
+    }
+
+    :root .olu.olu-shell .ab-bottom-actions {
+        flex: none;
+    }
+
+    /* Footer row under the slide */
+    :root .olu.olu-shell .ab-v-foot {
+        flex-wrap: wrap;
+    }
+
+    /* Toolbar buttons */
+    :root .olu.olu-shell .ab-create {
+        min-height: 44px;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE - Backgrounds page: filter tabs + chat button
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Tabs: rounded rectangle, buttons share each row evenly */
+    :root .olu.olu-shell .bk-head {
+        align-items: stretch;
+    }
+
+    :root .olu.olu-shell .bk-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .3rem;
+        width: 100%;
+        box-sizing: border-box;
+        padding: .3rem;
+        border-radius: 22px;
+        overflow: hidden;
+    }
+
+    :root .olu.olu-shell .bk-tabs button {
+        flex: 1 1 calc(33.333% - .3rem);
+        justify-content: center;
+        min-width: 0;
+        min-height: 40px;
+        padding: .45rem .6rem;
+        white-space: nowrap;
+    }
+
+    /* Hero and panels never push wider than the screen */
+    :root .olu.olu-shell .bk,
+    :root .olu.olu-shell .bk > * {
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    :root .olu.olu-shell .bk-hero-text {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    :root .olu.olu-shell .bk-panel {
+        padding: 1rem 1rem 1.1rem;
+    }
+
+    :root .olu.olu-shell .bk-upload-btn {
+        align-self: stretch;
+        min-height: 44px;
+    }
+
+    /* Chat button: smaller, tucked into the corner */
+    :root .olu.olu-shell .olu-fab {
+        right: .6rem;
+        bottom: calc(.6rem + env(safe-area-inset-bottom));
+        width: 2.8rem;
+        height: 2.8rem;
+        opacity: .8;
+        box-shadow: 0 0 0 4px var(--ou-accent-soft), 0 6px 16px -8px var(--ou-accent);
+    }
+
+    :root .olu.olu-shell .olu-fab:active {
+        opacity: 1;
+    }
+
+    :root .olu.olu-shell .olu-fab svg {
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+}

@@ -3,6 +3,7 @@ import '../../css/olu-features.css';
 import '../../css/olu-layout.css';
 import '../../css/olu-dashboard.css';
 import '../../css/notifications.css';
+import '../../css/responsive.css';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -11,6 +12,8 @@ import NotificationBell from '../components/notification-bell';
 import ProfileMenu from '../components/profile-menu';
 import Sidebar from '../components/sidebar';
 import type { SharedProps } from '../types/olu';
+import'../../css/welcome.css';
+
 
 type Props = {
     title: string;
