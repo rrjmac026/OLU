@@ -45,3 +45,4 @@ yarn-error.log
 PROGRESS.md
 .env.deployment
 .env.development
+.env.mobile_test
