@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Events\NotificationCreated;
 use App\Models\AppNotification;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -44,6 +45,13 @@ class Notifier
             'body' => ($settings?->notification_previews && $preview) ? Str::limit($preview, 120) : null,
             'url' => $url,
         ]);
+
+        // Realtime nudge for the Home badges. A Reverb hiccup must never break the action itself.
+        try {
+            broadcast(new NotificationCreated($to->id, $type));
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         // Keep the table small: drop this person's notifications older than 30 days.
         AppNotification::where('user_id', $to->id)

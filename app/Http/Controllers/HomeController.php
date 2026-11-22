@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ContentKind;
+use App\Models\AppNotification;
 use App\Models\CalendarEvent;
 use App\Models\ContentItem;
 use App\Models\DailyAnswer;
@@ -63,6 +64,13 @@ class HomeController extends Controller
             ])
             ->values();
 
+        $unreadByType = AppNotification::where('user_id', $user->id)
+            ->whereNull('read_at')
+            ->selectRaw('type, COUNT(*) as total')
+            ->groupBy('type')
+            ->pluck('total', 'type')
+            ->all();
+
         return Inertia::render('home', [
             'checkin_today' => $checkin ? ['mood' => $checkin->mood->value] : null,
             'next_event' => $next ? $next->toPayload($user, $nextDate) + [
@@ -73,6 +81,7 @@ class HomeController extends Controller
             'question_answered' => DailyAnswer::ownedBy($user)->whereDate('question_date', $today)->exists(),
             'memory_photos' => $memoryPhotos,
             'songs' => $songs,
+            'unread_by_type' => (object) $unreadByType,
         ]);
     }
 }

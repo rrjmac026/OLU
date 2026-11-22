@@ -52,6 +52,17 @@ class NotificationController extends Controller
         return response()->noContent();
     }
 
+    /** Marks every unread notification of one type as read (used by the Home card badges). */
+    public function readType(Request $request, string $type): Response
+    {
+        AppNotification::where('user_id', $request->user()->id)
+            ->where('type', $type)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->noContent();
+    }
+
     public function clear(Request $request): Response
     {
         AppNotification::where('user_id', $request->user()->id)->delete();

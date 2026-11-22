@@ -51,6 +51,13 @@ class ActivityNotifier
             }
         });
 
+        // Check-ins are saved with updateOrCreate, so re-saves and private -> shared arrive as updates.
+        DailyCheckin::updated(function ($m) {
+            if (self::isShared($m) && $m->wasChanged(['visibility', 'mood', 'note'])) {
+                self::say('checkin', 'shared a check-in 💗', $m->mood?->value, '/checkins');
+            }
+        });
+
         JournalEntry::created(function ($m) {
             if (self::isShared($m)) {
                 self::say('journal', 'shared a journal entry 📖', $m->title, '/journal');
@@ -77,6 +84,13 @@ class ActivityNotifier
 
         DailyAnswer::created(function ($m) {
             if (self::isShared($m)) {
+                self::say('answer', "answered today's question 💭", null, '/questions');
+            }
+        });
+
+        // Saving again just updates today's answer, so private -> shared and edits arrive as updates.
+        DailyAnswer::updated(function ($m) {
+            if (self::isShared($m) && $m->wasChanged(['visibility', 'answer'])) {
                 self::say('answer', "answered today's question 💭", null, '/questions');
             }
         });

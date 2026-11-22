@@ -179,6 +179,7 @@ Route::middleware('auth.session')->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/read', [NotificationController::class, 'readAll']);
+    Route::post('/notifications/type/{type}/read', [NotificationController::class, 'readType']);
     Route::post('/notifications/{id}/read', [NotificationController::class, 'readOne'])->whereNumber('id');
     Route::delete('/notifications', [NotificationController::class, 'clear']);
 });

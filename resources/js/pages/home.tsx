@@ -1,5 +1,5 @@
-import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import AppLayout from '../layouts/app-layout';
 import HeroSky from '../components/hero-sky';
@@ -26,6 +26,18 @@ type Props = {
     bucket?: { done: number; total: number } | null;
     songs?: PlayerSong[];
     memory_photos?: MemorySlide[];
+    unread_by_type?: Record<string, number>;
+};
+
+// Same refresh rate as the notification bell.
+const BADGE_REFRESH_MS = 8000;
+
+// Generic labels only: previews are off by default, so never show notification content here.
+const BADGE_LABELS: Record<string, string> = {
+    checkin: 'New check-in',
+    answer: 'New answer',
+    album: 'New album story',
+    letter: 'New letter',
 };
 
 // 👇 NEW: falling petals (same recipe as the Memories page)
@@ -45,6 +57,7 @@ export default function Home({
     bucket = null,
     songs = [],
     memory_photos = [],
+    unread_by_type = {},
 }: Props) {
     const { auth } = usePage<SharedProps>().props;
     const name = auth.user?.display_name ?? auth.user?.name ?? '';
@@ -58,7 +71,59 @@ export default function Home({
     const bucketPct = bucket && bucket.total > 0 ? Math.round((bucket.done / bucket.total) * 100) : 0;
 
     const [compliment, setCompliment] = useState(daily_compliment);
-    
+    const [unread, setUnread] = useState<Record<string, number>>({ ...unread_by_type });
+
+    // Whenever the server sends fresh counts (page load or a poll), use them.
+    useEffect(() => {
+        setUnread({ ...unread_by_type });
+    }, [unread_by_type]);
+
+    // Poll only the badge counts, like the notification bell does.
+    useEffect(() => {
+        const refresh = () => {
+        if (document.visibilityState !== 'visible') {
+            return;
+        }
+
+        router.reload({ only: ['unread_by_type'] });
+    };
+
+        const timer = window.setInterval(refresh, BADGE_REFRESH_MS);
+        document.addEventListener('visibilitychange', refresh);
+        window.addEventListener('focus', refresh);
+
+        return () => {
+            window.clearInterval(timer);
+            document.removeEventListener('visibilitychange', refresh);
+            window.removeEventListener('focus', refresh);
+        };
+    }, []);
+
+    /** Clears the badge on click and marks that type as read on the server. */
+    function clearBadge(type: string) {
+        if (!unread[type]) {
+            return;
+        }
+
+        setUnread((prev) => ({ ...prev, [type]: 0 }));
+        api('POST', `/notifications/type/${type}/read`).catch(() => {
+            // badge already cleared locally; nothing else to do
+        });
+    }
+
+    function badge(type: string) {
+        const count = unread[type] ?? 0;
+
+        if (count <= 0) {
+            return null;
+        }
+
+        return (
+            <span className="home-quick-badge" role="status">
+                {count > 1 ? `${count} new` : BADGE_LABELS[type]}
+            </span>
+        );
+    }
 
     async function another() {
         try {
@@ -132,7 +197,8 @@ export default function Home({
 
                 {/* Quick cards */}
                 <section className="home-quick">
-                    <Link href="/checkins" className="home-quick-card">
+                    <Link href="/checkins" className="home-quick-card" onClick={() => clearBadge('checkin')}>
+                        {badge('checkin')}
                         <span className="home-quick-icon" aria-hidden="true">💗</span>
                         <span className="home-quick-text">
                             <strong>How&apos;s your heart today?</strong>
@@ -140,7 +206,8 @@ export default function Home({
                         </span>
                         <ChevronRight className="home-chev" size={20} aria-hidden="true" />
                     </Link>
-                    <Link href="/questions" className="home-quick-card">
+                    <Link href="/questions" className="home-quick-card" onClick={() => clearBadge('answer')}>
+                        {badge('answer')}
                         <span className="home-quick-icon" aria-hidden="true">💬</span>
                         <span className="home-quick-text">
                             <strong>Daily Question</strong>
@@ -152,15 +219,17 @@ export default function Home({
                         </span>
                         <ChevronRight className="home-chev" size={20} aria-hidden="true" />
                     </Link>
-                    <Link href="/playroom" className="home-quick-card">
-                        <span className="home-quick-icon" aria-hidden="true">🎮</span>
+                    <Link href="/albums" className="home-quick-card" onClick={() => clearBadge('album')}>
+                        {badge('album')}
+                        <span className="home-quick-icon" aria-hidden="true">📸</span>
                         <span className="home-quick-text">
-                            <strong>Play a Game</strong>
-                            <small>Have some fun!</small>
+                            <strong>Our Albums</strong>
+                            <small>Browse our photo albums</small>
                         </span>
                         <ChevronRight className="home-chev" size={20} aria-hidden="true" />
                     </Link>
-                    <Link href="/letters" className="home-quick-card">
+                    <Link href="/letters" className="home-quick-card" onClick={() => clearBadge('letter')}>
+                        {badge('letter')}
                         <span className="home-quick-icon" aria-hidden="true">🎁</span>
                         <span className="home-quick-text">
                             <strong>Open a Surprise</strong>
