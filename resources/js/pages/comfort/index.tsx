@@ -294,32 +294,6 @@ export default function ComfortIndex() {
                 <div className="cf-divider" aria-hidden="true">
                     <Heart size={22} />
                 </div>
-
-                {/* Other ways */}
-                <section className="cf-more">
-                    <div className="cf-more-head">
-                        <h2>
-                            <Sparkle size={20} />
-                            Other Ways to Feel Better
-                        </h2>
-                        <Link href="/playroom">Explore more little comforts &rarr;</Link>
-                    </div>
-
-                    <div className="cf-tiles">
-                        {COMFORTS.map((c) => (
-                            <Link key={c.href} href={c.href} className="cf-tile">
-                                <span className="cf-tile-icon">
-                                    <c.icon size={34} />
-                                </span>
-                                <span className="cf-tile-text">
-                                    <strong>{c.title}</strong>
-                                    <small>{c.desc}</small>
-                                </span>
-                                <ChevronRight className="cf-tile-chev" size={20} />
-                            </Link>
-                        ))}
-                    </div>
-                </section>
             </div>
         </AppLayout>
     );

@@ -1,9 +1,11 @@
-import '../../css/olu.css';
+﻿import '../../css/olu.css';
 import '../../css/olu-features.css';
 import '../../css/olu-layout.css';
 import '../../css/olu-dashboard.css';
 import '../../css/notifications.css';
 import '../../css/responsive.css';
+import '../../css/settings.css';
+import '../../css/admin.css';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -41,7 +43,7 @@ export default function AppLayout({ title, children }: Props) {
                 <div className="olu-content">
                     <header className="olu-topbar">
                         <button type="button" className="olu-burger" aria-label="Toggle menu" onClick={() => setSidebarOpen((v) => !v)}>
-                            ☰
+                            â˜°
                         </button>
                         <div className="olu-topbar-spacer" />
                         <NotificationBell />
@@ -57,3 +59,4 @@ export default function AppLayout({ title, children }: Props) {
         </>
     );
 }
+

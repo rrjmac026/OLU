@@ -1,0 +1,267 @@
+﻿/* ==========================================================================
+   Admin pages (Content + Users)
+   ========================================================================== */
+
+/* ---- shared card ---- */
+:root .olu-shell .olu-main:has(.olu-ctabs) > .olu-card,
+:root .olu-shell .olu-main:has(> .olu-card .olu-table) > .olu-card {
+    width: 100%;
+    max-width: 56rem;
+    margin: 0 auto 1rem;
+    padding: 1.5rem 1.7rem 1.7rem;
+    border-radius: 24px;
+    background: var(--ou-card);
+    border: 1px solid var(--ou-border);
+    box-shadow: 0 18px 44px -28px rgba(0, 0, 0, .6);
+}
+:root .olu-shell .olu-main:has(.olu-ctabs) > h1 {
+    max-width: 56rem;
+    margin: .6rem auto 1rem;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 700;
+}
+:root .olu-shell .olu-main > .olu-card h3 {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* ---- content tabs ---- */
+:root .olu-shell .olu-ctabs {
+    flex-wrap: nowrap;
+    gap: .25rem;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 1rem;
+    padding: .25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-radius: 999px;
+    background: var(--ou-card-2);
+    border: 1px solid var(--ou-border);
+}
+:root .olu-shell .olu-ctabs::-webkit-scrollbar { display: none; }
+:root .olu-shell .olu-ctabs a {
+    flex: none;
+    padding: .5rem 1.1rem;
+    border: 0;
+    border-radius: 999px;
+    color: var(--ou-muted);
+    font-size: .9rem;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+}
+:root .olu-shell .olu-ctabs a:hover { color: var(--ou-text); }
+:root .olu-shell .olu-ctabs a.active {
+    background: var(--ou-accent);
+    color: var(--ou-on-accent);
+    font-weight: 600;
+    box-shadow: 0 6px 18px -8px var(--ou-accent);
+}
+
+/* ---- add form ---- */
+:root .olu-shell .olu-content-add {
+    gap: .7rem;
+    margin: .9rem 0 1.4rem;
+}
+:root .olu-shell .olu-content-add textarea,
+:root .olu-shell .olu-content-row textarea {
+    width: 100%;
+    padding: .8rem 1rem;
+    border-radius: 14px;
+    font: inherit;
+    line-height: 1.5;
+    resize: vertical;
+}
+:root .olu-shell .olu-content-add textarea:focus-visible,
+:root .olu-shell .olu-content-row textarea:focus-visible {
+    outline: 0;
+    border-color: var(--ou-accent);
+    box-shadow: 0 0 0 3px var(--ou-accent-soft);
+}
+:root .olu-shell .olu-content-add .olu-btn {
+    justify-self: start;
+    padding: .65rem 1.8rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff9ccd, var(--ou-accent));
+    color: var(--ou-on-accent);
+    font-weight: 600;
+    box-shadow: 0 10px 24px -10px var(--ou-accent);
+}
+:root .olu-shell .olu-cal-error { color: #ff8da0; font-size: .82rem; }
+
+/* ---- content list ---- */
+:root .olu-shell .olu-content-list { gap: .7rem; }
+:root .olu-shell .olu-content-row {
+    gap: .7rem;
+    padding: .9rem 1.1rem;
+    border-radius: 18px;
+    background: var(--ou-card-2);
+    border: 1px solid var(--ou-border);
+    transition: border-color .15s, transform .15s;
+}
+:root .olu-shell .olu-content-row:hover { border-color: var(--ou-accent); }
+:root .olu-shell .olu-content-row.off { opacity: .55; }
+:root .olu-shell .olu-content-body { line-height: 1.6; }
+:root .olu-shell .olu-content-actions {
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+:root .olu-shell .olu-content-actions button:not(.olu-btn) {
+    padding: .3rem .95rem;
+    border-radius: 999px;
+    background: var(--ou-card);
+    border: 1px solid var(--ou-border);
+    color: var(--ou-text);
+    font-size: .82rem;
+    text-decoration: none;
+    opacity: 1;
+    transition: background .15s, color .15s, border-color .15s;
+}
+:root .olu-shell .olu-content-actions button:not(.olu-btn):hover {
+    background: var(--ou-accent-soft);
+    border-color: var(--ou-accent);
+    color: var(--ou-accent);
+}
+:root .olu-shell .olu-content-actions button:not(.olu-btn):last-child:hover {
+    background: rgba(255, 77, 109, .14);
+    border-color: #ff6b81;
+    color: #ff8da0;
+}
+:root .olu-shell .olu-content-actions .olu-btn {
+    padding: .4rem 1.2rem;
+    border-radius: 999px;
+    font-size: .85rem;
+}
+:root .olu-shell .olu-content-actions .olu-btn:last-child {
+    background: var(--ou-card);
+    border: 1px solid var(--ou-border);
+    color: var(--ou-text);
+}
+
+/* ---- users table ---- */
+:root .olu-shell .olu-table { border-collapse: separate; border-spacing: 0 .5rem; }
+:root .olu-shell .olu-table th {
+    padding: .2rem .9rem;
+    border: 0;
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ou-muted);
+}
+:root .olu-shell .olu-table td {
+    padding: .8rem .9rem;
+    border: 0;
+    background: var(--ou-card-2);
+}
+:root .olu-shell .olu-table td:first-child { border-radius: 14px 0 0 14px; font-weight: 500; }
+:root .olu-shell .olu-table td:last-child { border-radius: 0 14px 14px 0; text-align: right; }
+:root .olu-shell .olu-table .olu-link {
+    padding: .3rem .95rem;
+    border-radius: 999px;
+    background: var(--ou-card);
+    border: 1px solid var(--ou-border);
+    color: var(--ou-text);
+    font-size: .82rem;
+    transition: background .15s, color .15s, border-color .15s;
+}
+:root .olu-shell .olu-table .olu-link:hover {
+    background: var(--ou-accent-soft);
+    border-color: var(--ou-accent);
+    color: var(--ou-accent);
+}
+
+/* ---- users create form ---- */
+:root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card input:not([type='checkbox']),
+:root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card select {
+    width: 100%;
+    padding: .8rem 1rem;
+    border-radius: 14px;
+    font: inherit;
+}
+:root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.6rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f28fbe' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+}
+:root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card input:focus-visible,
+:root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card select:focus-visible {
+    outline: 0;
+    border-color: var(--ou-accent);
+    box-shadow: 0 0 0 3px var(--ou-accent-soft);
+}
+:root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card .olu-btn {
+    padding: .7rem 2rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff9ccd, var(--ou-accent));
+    color: var(--ou-on-accent);
+    font-weight: 600;
+    box-shadow: 0 10px 24px -10px var(--ou-accent);
+}
+
+/* ---- phones ---- */
+@media (max-width: 768px) {
+    :root .olu-shell .olu-main:has(.olu-ctabs) > .olu-card,
+    :root .olu-shell .olu-main:has(> .olu-card .olu-table) > .olu-card {
+        padding: 1.1rem 1rem 1.3rem;
+        border-radius: 20px;
+    }
+    :root .olu-shell .olu-ctabs { width: 100%; }
+    :root .olu-shell .olu-content-add textarea,
+    :root .olu-shell .olu-content-row textarea,
+    :root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card input,
+    :root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card select { font-size: 16px; }
+    :root .olu-shell .olu-content-add .olu-btn,
+    :root .olu-shell .olu-main:has(> .olu-card .olu-table) > form.olu-card .olu-btn {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    /* table rows become cards */
+    :root .olu-shell .olu-table,
+    :root .olu-shell .olu-table tbody { display: block; }
+    :root .olu-shell .olu-table thead { display: none; }
+    :root .olu-shell .olu-table tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: .2rem .8rem;
+        align-items: center;
+        margin-bottom: .7rem;
+        padding: .85rem 1rem;
+        border-radius: 18px;
+        background: var(--ou-card-2);
+        border: 1px solid var(--ou-border);
+    }
+    :root .olu-shell .olu-table td,
+    :root .olu-shell .olu-table td:first-child,
+    :root .olu-shell .olu-table td:last-child {
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        text-align: left;
+    }
+    :root .olu-shell .olu-table td:nth-child(1) { grid-column: 1; grid-row: 1; font-size: 1.05rem; }
+    :root .olu-shell .olu-table td:nth-child(2) {
+        grid-column: 1 / -1; grid-row: 2;
+        color: var(--ou-muted); font-size: .88rem; overflow-wrap: anywhere;
+    }
+    :root .olu-shell .olu-table td:nth-child(3),
+    :root .olu-shell .olu-table td:nth-child(4) {
+        grid-row: 3;
+        justify-self: start;
+        margin-top: .4rem;
+        padding: .15rem .7rem;
+        border-radius: 999px;
+        background: var(--ou-accent-soft);
+        color: var(--ou-accent);
+        font-size: .78rem;
+        text-transform: capitalize;
+    }
+    :root .olu-shell .olu-table td:nth-child(3) { grid-column: 1; }
+    :root .olu-shell .olu-table td:nth-child(4) { grid-column: 1; margin-left: 4.6rem; }
+    :root .olu-shell .olu-table td:nth-child(5) { grid-column: 2; grid-row: 1; }
+}
