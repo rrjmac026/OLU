@@ -8,6 +8,10 @@
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#7c5cff">
+        <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
         @fonts
 
         @viteReactRefresh

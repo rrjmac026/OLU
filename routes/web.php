@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PushSubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -182,4 +183,10 @@ Route::middleware('auth.session')->group(function () {
     Route::post('/notifications/type/{type}/read', [NotificationController::class, 'readType']);
     Route::post('/notifications/{id}/read', [NotificationController::class, 'readOne'])->whereNumber('id');
     Route::delete('/notifications', [NotificationController::class, 'clear']);
+
+
+    // Push notifications
+    Route::get('/push/key', [PushSubscriptionController::class, 'key']);
+    Route::post('/push/subscribe', [PushSubscriptionController::class, 'store']);
+    Route::post('/push/unsubscribe', [PushSubscriptionController::class, 'destroy']);
 });

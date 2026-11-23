@@ -1,6 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { Check, Field } from '../../components/form-bits';
+import PushToggle from '../../components/push-toggle';
 import SettingsTabs from '../../components/settings-tabs';
 import AppLayout from '../../layouts/app-layout';
 
@@ -40,6 +41,7 @@ export default function Preferences({ settings }: Props) {
                 </Field>
                 <Check
                     label="Notifications"
+                    hint="The master switch. Turn it off to stop all notifications, including on your phone."
                     checked={form.data.notifications_enabled}
                     onChange={(v) => form.setData('notifications_enabled', v)}
                 />
@@ -59,6 +61,8 @@ export default function Preferences({ settings }: Props) {
                     Save
                 </button>
             </form>
+
+            <PushToggle />
         </AppLayout>
     );
 }

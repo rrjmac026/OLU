@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Events\ChatUpdated;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\WebPushService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -105,6 +107,17 @@ class ChatController extends Controller
         ]);
 
         $this->push($me->id, $partner->id, 'sent', ['message' => $message->toPayload()]);
+
+        // Web push to the partner's devices. Never throws, and respects her
+        // notification settings (previews are off unless she turned them on).
+        app(WebPushService::class)->sendToUser(
+            $partner,
+            config('app.name'),
+            'You have a new message 💗',
+            Str::limit($message->body, 80),
+            '/chat',
+            'chat',
+        );
 
         return response()->json($message->toPayload(), 201);
     }

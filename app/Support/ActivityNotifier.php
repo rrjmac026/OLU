@@ -8,14 +8,10 @@ use App\Models\BucketItem;
 use App\Models\CalendarEvent;
 use App\Models\DailyAnswer;
 use App\Models\DailyCheckin;
-use App\Models\GardenPlant;
 use App\Models\JournalEntry;
 use App\Models\Letter;
 use App\Models\Memory;
-use App\Models\MemoryMatchGame;
-use App\Models\QuizQuestion;
 use App\Models\Song;
-use App\Models\TicTacToeGame;
 use App\Models\TimelineMoment;
 use App\Models\User;
 
@@ -121,33 +117,11 @@ class ActivityNotifier
             self::say('song', 'added a song 🎵', $m->title, '/music');
         });
 
-        QuizQuestion::created(function ($m) {
-            self::say('quiz', 'added a couple quiz question 🧩', null, '/quiz');
-        });
-
         // The partner only sees an album once it is published.
         Album::updated(function ($m) {
             if ($m->wasChanged('is_published') && $m->is_published) {
                 self::say('album', 'published a new album 🎞️', $m->title, '/albums');
             }
-        });
-
-        GardenPlant::created(function () {
-            self::say('garden', 'planted something in the garden 🌱', null, '/garden');
-        });
-
-        GardenPlant::updated(function ($m) {
-            if ($m->wasChanged('stage')) {
-                self::say('garden', 'watered the garden 💧', null, '/garden');
-            }
-        });
-
-        TicTacToeGame::created(function () {
-            self::say('game', 'started a Tic-tac-toe game ⭕', null, '/games/tictactoe');
-        });
-
-        MemoryMatchGame::created(function () {
-            self::say('game', 'started a Memory Match game 🃏', null, '/games/memorymatch');
         });
     }
 }
