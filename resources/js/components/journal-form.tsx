@@ -103,7 +103,9 @@ export default function JournalForm({ initial, entryId }: Props) {
                         className={form.data.visibility === 'shared' ? 'on' : ''}
                         onClick={() => form.setData('visibility', 'shared')}
                     >
-                        <Users size={15} aria-hidden="true" /> Shared with my partner
+                        <Users size={15} aria-hidden="true" />{' '}
+                        <span className="ci-long">Shared with my partner</span>
+                        <span className="ci-short">Shared</span>
                     </button>
                 </div>
                 {form.errors.visibility && <p className="olu-cal-error">{form.errors.visibility}</p>}

@@ -249,3 +249,36 @@
     .cl-week .cl-grid, .cl-agenda-day { grid-template-columns: 1fr; }
     .cl-week .cl-day { min-height: 3.4rem; }
 }
+/* ---- Phones: view switcher fits, weekday labels don't collide ---- */
+@media (max-width: 640px) {
+    .cl-bar { gap: .6rem; }
+    .cl-nav { padding-right: .6rem; }
+    .cl-month { font-size: 1.1rem; gap: .5rem; }
+
+    .cl-views {
+        display: flex;
+        width: 100%;
+        margin-left: 0;
+        padding: .22rem;
+        gap: .15rem;
+    }
+    .cl-views button {
+        flex: 1 1 0;
+        min-width: 0;
+        justify-content: center;
+        gap: .35rem;
+        padding: .5rem .3rem;
+        font-size: .85rem;
+        white-space: nowrap;
+    }
+    .cl-views button svg { font-size: .95rem; }
+
+    .cl-grid { gap: .3rem; }
+    .cl-dow { gap: 0; font-size: .8rem; }
+    .cl-dow i { display: none; }
+}
+
+/* Very small phones: icons off in the switcher too, labels only */
+@media (max-width: 360px) {
+    .cl-views button svg { display: none; }
+}

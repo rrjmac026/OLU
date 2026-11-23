@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { filterCss } from '@/lib/albums';
 import type { AlbumView } from '@/lib/albums';
 
@@ -135,10 +136,8 @@ export default function AlbumViewer({ album, autoplay, playSignal, canManage, on
     const [isFs, setIsFs] = useState(false);
     const [audioIssue, setAudioIssue] = useState<string | null>(null);
 
-
     const elapsed = useRef(0);
     const barsRef = useRef<HTMLDivElement>(null);
-    const playerRef = useRef<HTMLDivElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
     const swipe = useRef({ x: 0, done: false });
     const lastSignal = useRef(playSignal);
@@ -187,10 +186,8 @@ export default function AlbumViewer({ album, autoplay, playSignal, canManage, on
         setPlaying(true);
     };
 
-    const toggleFs = () => {
-        if (document.fullscreenElement) document.exitFullscreen();
-        else playerRef.current?.requestFullscreen?.();
-    };
+    /* In-page "fullscreen": a fixed overlay on <body> (like Facebook stories), not the browser Fullscreen API. */
+    const toggleFs = () => setIsFs((v) => !v);
 
     /* ----- "play" pressed on the album card ----- */
 
@@ -317,11 +314,23 @@ export default function AlbumViewer({ album, autoplay, playSignal, canManage, on
         }
     }, [index, slides]);
 
+    /* While the overlay is open: lock page scroll and let Escape close it. */
     useEffect(() => {
-        const onChange = () => setIsFs(document.fullscreenElement === playerRef.current);
-        document.addEventListener('fullscreenchange', onChange);
-        return () => document.removeEventListener('fullscreenchange', onChange);
-    }, []);
+        if (!isFs) return;
+
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        const onEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setIsFs(false);
+        };
+        document.addEventListener('keydown', onEsc);
+
+        return () => {
+            document.body.style.overflow = prevOverflow;
+            document.removeEventListener('keydown', onEsc);
+        };
+    }, [isFs]);
 
     const onKey = (e: ReactKeyboardEvent) => {
         const t = e.target as HTMLElement;
@@ -344,6 +353,128 @@ export default function AlbumViewer({ album, autoplay, playSignal, canManage, on
     };
 
     const eqOn = playing && !!audioUrl && musicOn;
+
+    const player = (
+        <div className={`ab-player${isFs ? ' fs' : ''}`}>
+            <div className="ab-bars" ref={barsRef}>
+                {slides.map((s, i) => (
+                    <button
+                        key={s.id}
+                        type="button"
+                        className={i < index ? 'done' : i === index ? 'active' : ''}
+                        onClick={() => go(i)}
+                        aria-label={`Go to slide ${i + 1}`}
+                    >
+                        <i />
+                    </button>
+                ))}
+            </div>
+
+            <div className="ab-stage">
+                {slide ? (
+                    <>
+                        <div key={slide.id} className={`ab-shot ab-t-${slide.transition}`}>
+                            <img
+                                src={slide.url}
+                                alt={slide.caption ?? ''}
+                                className="ab-kb"
+                                draggable={false}
+                                style={
+                                    {
+                                        filter: filterCss(slide.filter),
+                                        '--dur': `${slide.duration + 1}s`,
+                                        animationPlayState: playing ? 'running' : 'paused',
+                                    } as CSSProperties
+                                }
+                            />
+                        </div>
+                        <div className="ab-vig" />
+
+                        <button
+                            type="button"
+                            className="ab-hit"
+                            aria-label={playing ? 'Pause' : 'Play'}
+                            onPointerDown={(e) => {
+                                swipe.current = { x: e.clientX, done: false };
+                            }}
+                            onPointerUp={(e) => {
+                                const dx = e.clientX - swipe.current.x;
+                                if (Math.abs(dx) > 50) {
+                                    swipe.current.done = true;
+                                    if (dx < 0) next();
+                                    else prev();
+                                }
+                            }}
+                            onClick={() => {
+                                if (swipe.current.done) {
+                                    swipe.current.done = false;
+                                    return;
+                                }
+                                toggle();
+                            }}
+                        />
+
+                        <span className={`ab-bigplay${playing ? '' : ' show'}`} aria-hidden>
+                            {finished ? <RotateCcw size={34} /> : <Play size={36} fill="currentColor" />}
+                        </span>
+
+                        <span className="ab-counter">
+                            {index + 1} / {total}
+                        </span>
+
+                        <button type="button" className="ab-nav prev" onClick={prev} aria-label="Previous slide">
+                            <ArrowLeft size={22} />
+                        </button>
+                        <button type="button" className="ab-nav next" onClick={next} disabled={index >= total - 1} aria-label="Next slide">
+                            <ArrowRight size={22} />
+                        </button>
+
+                        {slide.caption && (
+                            <p key={`cap-${slide.id}`} className={`ab-cap ${slide.caption_position}`}>
+                                <span>{slide.caption}</span>
+                            </p>
+                        )}
+
+                        <div className="ab-bottom">
+                            {slide.song ? (
+                                <div className="ab-song">
+                                    <Music size={15} />
+                                    <span>
+                                        {slide.song.title}
+                                        {slide.song.artist ? ` – ${slide.song.artist}` : ''}
+                                    </span>
+                                    {audioIssue && <small className="ab-issue">⚠ {audioIssue}</small>}
+                                    <span className={`ab-eqb${eqOn ? ' on' : ''}`} aria-hidden>
+                                        <i />
+                                        <i />
+                                        <i />
+                                    </span>
+                                </div>
+                            ) : (
+                                <span />
+                            )}
+
+                            <div className="ab-bottom-actions">
+                                <button type="button" className="ab-ico" onClick={toggleFs} aria-label={isFs ? 'Exit fullscreen' : 'Fullscreen'}>
+                                    {isFs ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`ab-ico${likes.has(`s${slide.id}`) ? ' liked' : ''}`}
+                                    onClick={() => likes.toggle(`s${slide.id}`)}
+                                    aria-label="Like this slide"
+                                >
+                                    <Heart size={19} fill={likes.has(`s${slide.id}`) ? 'currentColor' : 'none'} />
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <div className="ab-stage-empty">This album has no slides yet ♡</div>
+                )}
+            </div>
+        </div>
+    );
 
     return (
         <div className="ab-viewer" id="ab-viewer" tabIndex={0} onKeyDown={onKey}>
@@ -380,125 +511,7 @@ export default function AlbumViewer({ album, autoplay, playSignal, canManage, on
                 {canManage && <AlbumMenu published={album.is_published} onPublish={onPublish} onDelete={onDelete} />}
             </header>
 
-            <div className="ab-player" ref={playerRef}>
-                <div className="ab-bars" ref={barsRef}>
-                    {slides.map((s, i) => (
-                        <button
-                            key={s.id}
-                            type="button"
-                            className={i < index ? 'done' : i === index ? 'active' : ''}
-                            onClick={() => go(i)}
-                            aria-label={`Go to slide ${i + 1}`}
-                        >
-                            <i />
-                        </button>
-                    ))}
-                </div>
-
-                <div className="ab-stage">
-                    {slide ? (
-                        <>
-                            <div key={slide.id} className={`ab-shot ab-t-${slide.transition}`}>
-                                <img
-                                    src={slide.url}
-                                    alt={slide.caption ?? ''}
-                                    className="ab-kb"
-                                    draggable={false}
-                                    style={
-                                        {
-                                            filter: filterCss(slide.filter),
-                                            '--dur': `${slide.duration + 1}s`,
-                                            animationPlayState: playing ? 'running' : 'paused',
-                                        } as CSSProperties
-                                    }
-                                />
-                            </div>
-                            <div className="ab-vig" />
-
-                            <button
-                                type="button"
-                                className="ab-hit"
-                                aria-label={playing ? 'Pause' : 'Play'}
-                                onPointerDown={(e) => {
-                                    swipe.current = { x: e.clientX, done: false };
-                                }}
-                                onPointerUp={(e) => {
-                                    const dx = e.clientX - swipe.current.x;
-                                    if (Math.abs(dx) > 50) {
-                                        swipe.current.done = true;
-                                        if (dx < 0) next();
-                                        else prev();
-                                    }
-                                }}
-                                onClick={() => {
-                                    if (swipe.current.done) {
-                                        swipe.current.done = false;
-                                        return;
-                                    }
-                                    toggle();
-                                }}
-                            />
-
-                            <span className={`ab-bigplay${playing ? '' : ' show'}`} aria-hidden>
-                                {finished ? <RotateCcw size={34} /> : <Play size={36} fill="currentColor" />}
-                            </span>
-
-                            <span className="ab-counter">
-                                {index + 1} / {total}
-                            </span>
-
-                            <button type="button" className="ab-nav prev" onClick={prev} aria-label="Previous slide">
-                                <ArrowLeft size={22} />
-                            </button>
-                            <button type="button" className="ab-nav next" onClick={next} disabled={index >= total - 1} aria-label="Next slide">
-                                <ArrowRight size={22} />
-                            </button>
-
-                            {slide.caption && (
-                                <p key={`cap-${slide.id}`} className={`ab-cap ${slide.caption_position}`}>
-                                    <span>{slide.caption}</span>
-                                </p>
-                            )}
-
-                            <div className="ab-bottom">
-                                {slide.song ? (
-                                    <div className="ab-song">
-                                        <Music size={15} />
-                                        <span>
-                                            {slide.song.title}
-                                            {slide.song.artist ? ` – ${slide.song.artist}` : ''}
-                                        </span>
-                                        {audioIssue && <small className="ab-issue">⚠ {audioIssue}</small>}
-                                        <span className={`ab-eqb${eqOn ? ' on' : ''}`} aria-hidden>
-                                            <i />
-                                            <i />
-                                            <i />
-                                        </span>
-                                    </div>
-                                ) : (
-                                    <span />
-                                )}
-
-                                <div className="ab-bottom-actions">
-                                    <button type="button" className="ab-ico" onClick={toggleFs} aria-label="Fullscreen">
-                                        {isFs ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`ab-ico${likes.has(`s${slide.id}`) ? ' liked' : ''}`}
-                                        onClick={() => likes.toggle(`s${slide.id}`)}
-                                        aria-label="Like this slide"
-                                    >
-                                        <Heart size={19} fill={likes.has(`s${slide.id}`) ? 'currentColor' : 'none'} />
-                                    </button>
-                                </div>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="ab-stage-empty">This album has no slides yet ♡</div>
-                    )}
-                </div>
-            </div>
+            {isFs ? createPortal(<div className="ab-fs-root">{player}</div>, document.body) : player}
 
             <footer className="ab-v-foot">
                 <div className="ab-v-thumb round">{cover ? <img src={cover} alt="" /> : <ImageIcon size={18} />}</div>
