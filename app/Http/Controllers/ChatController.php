@@ -215,6 +215,10 @@ class ChatController extends Controller
 
     private function push(int $a, int $b, string $type, array $data): void
     {
-        event(new ChatUpdated(Message::channelFor($a, $b), $type, $data));
+        try {
+            event(new ChatUpdated(Message::channelFor($a, $b), $type, $data));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 }
