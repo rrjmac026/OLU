@@ -26,14 +26,23 @@ export function getEcho(): Echo<'reverb'> {
 
   window.Pusher = Pusher;
 
+  // Dev (npm run dev): connect to whatever address the page was opened from
+  // (PC or phone) on Reverb's default port 8080. No .env values involved.
+  // Production (npm run build): use the baked-in VITE_* values.
+  const dev = import.meta.env.DEV;
+
+  const host = dev ? window.location.hostname : import.meta.env.VITE_REVERB_HOST;
+  const port = dev ? 8080 : Number(import.meta.env.VITE_REVERB_PORT ?? 443);
+  const tls = dev ? false : (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https';
+
   instance = new Echo({
     broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: Number(import.meta.env.VITE_REVERB_PORT ?? 80),
-    wssPort: Number(import.meta.env.VITE_REVERB_PORT ?? 443),
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
-    enabledTransports: ['ws', 'wss'],
+    key: import.meta.env.VITE_REVERB_APP_KEY ?? 'olu-key',
+    wsHost: host,
+    wsPort: port,
+    wssPort: port,
+    forceTLS: tls,
+    enabledTransports: tls ? ['wss'] : ['ws'],
     auth: { headers: { 'X-XSRF-TOKEN': xsrfToken() } },
   });
 
