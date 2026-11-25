@@ -163,3 +163,21 @@
 .st-playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; box-shadow: 0 0 8px #fff; pointer-events: none; }
 .st-times { display: flex; justify-content: space-between; gap: .5rem; font-size: .82rem; opacity: .85; }
 .st-times b { font-variant-numeric: tabular-nums; }
+.st-track { touch-action: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; }
+.st-region, .st-grip { touch-action: none; }
+.st-region::before { content: ''; position: absolute; inset: 0 -14px; } /* bigger hit area */
+.st-grip { width: 22px; }
+
+@media (pointer: coarse) {
+    .st-track { height: 96px; }
+    .st-grip { width: 26px; }
+}
+.st-track { touch-action: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; }
+.st-region, .st-grip { touch-action: none; }
+.st-region::before { content: ''; position: absolute; inset: 0 -14px; }
+.st-grip { width: 22px; }
+
+@media (pointer: coarse) {
+    .st-track { height: 96px; }
+    .st-grip { width: 26px; }
+}

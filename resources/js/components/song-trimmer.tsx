@@ -121,6 +121,20 @@ export default function SongTrimmer({ audioUrl, start, end, onChange }: Props) {
     const endDrag = () => {
         drag.current = null;
     };
+    const trackDown = (ev: PointerEvent<HTMLElement>) => {
+        const track = trackRef.current;
+        if (!track || !duration) return;
+        ev.preventDefault();
+
+        const rect = track.getBoundingClientRect();
+        const t = ((ev.clientX - rect.left) / rect.width) * duration;
+        const len = e - s;
+        const ns = clamp(t - len / 2, 0, Math.max(0, duration - len));
+
+        track.setPointerCapture(ev.pointerId);
+        drag.current = { mode: 'move', x: ev.clientX, s: ns, e: ns + len };
+        onChange(round(ns), round(ns + len));
+    };
 
     const nudge = (mode: 'start' | 'end') => (ev: KeyboardEvent<HTMLElement>) => {
         const dir = ev.key === 'ArrowLeft' ? -0.5 : ev.key === 'ArrowRight' ? 0.5 : 0;
@@ -216,7 +230,14 @@ export default function SongTrimmer({ audioUrl, start, end, onChange }: Props) {
                 <p className="al-hint">{failed ? "Couldn't read this song file." : 'Reading the waveform…'}</p>
             ) : (
                 <>
-                    <div className="st-track" ref={trackRef}>
+                    <div
+                        className="st-track"
+                        ref={trackRef}
+                        onPointerDown={trackDown}
+                        onPointerMove={moveDrag}
+                        onPointerUp={endDrag}
+                        onPointerCancel={endDrag}
+                    >
                         <div className="st-wave" aria-hidden>
                             {peaks.map((p, i) => {
                                 const t = ((i + 0.5) / peaks.length) * duration;
@@ -231,9 +252,6 @@ export default function SongTrimmer({ audioUrl, start, end, onChange }: Props) {
                             className="st-region"
                             style={{ left: `${pct(s)}%`, width: `${pct(e) - pct(s)}%` }}
                             onPointerDown={begin('move')}
-                            onPointerMove={moveDrag}
-                            onPointerUp={endDrag}
-                            onPointerCancel={endDrag}
                             title="Drag to move the clip"
                         >
                             <span
@@ -245,9 +263,6 @@ export default function SongTrimmer({ audioUrl, start, end, onChange }: Props) {
                                 aria-valuemax={Math.round(duration)}
                                 aria-valuenow={Math.round(s)}
                                 onPointerDown={begin('start')}
-                                onPointerMove={moveDrag}
-                                onPointerUp={endDrag}
-                                onPointerCancel={endDrag}
                                 onKeyDown={nudge('start')}
                             />
                             <span
@@ -259,9 +274,6 @@ export default function SongTrimmer({ audioUrl, start, end, onChange }: Props) {
                                 aria-valuemax={Math.round(duration)}
                                 aria-valuenow={Math.round(e)}
                                 onPointerDown={begin('end')}
-                                onPointerMove={moveDrag}
-                                onPointerUp={endDrag}
-                                onPointerCancel={endDrag}
                                 onKeyDown={nudge('end')}
                             />
                         </div>
