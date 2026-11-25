@@ -16,3 +16,4 @@ Broadcast::channel('chat.{a}.{b}', function ($user, $a, $b) {
 
 
 Broadcast::channel('questions', fn ($user) => true);
+Broadcast::channel('activity', fn ($user) => $user->isAdmin());

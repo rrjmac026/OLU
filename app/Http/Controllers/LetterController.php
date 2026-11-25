@@ -118,6 +118,8 @@ class LetterController extends Controller
             $letter->forceFill(['opened_at' => now()])->save();
         }
 
+        ActivityLogger::log(ActivityAction::Opened, 'opened a letter', $letter);
+
         return redirect("/letters/{$letter->id}");
     }
 

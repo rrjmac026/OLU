@@ -144,6 +144,7 @@ class AlbumController extends Controller
     public function togglePublish(Album $album): RedirectResponse
     {
         $album->update(['is_published' => ! $album->is_published]);
+        ActivityLogger::log(ActivityAction::Published, 'published an album', $album);
 
         return back()->with('status', $album->is_published ? 'Album published.' : 'Album hidden.');
     }

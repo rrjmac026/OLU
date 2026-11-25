@@ -5,9 +5,15 @@ namespace App\Models;
 use App\Enums\ContentKind;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsActivity;
 
 class ContentItem extends Model
 {
+    use LogsActivity;
+
+    protected string $activityLabel = 'a content item';
+    protected array $activityIgnore = ['opened_at']; // fields that shouldn't count as an update
+
     protected $fillable = ['kind', 'body', 'is_active'];
 
     protected function casts(): array

@@ -26,6 +26,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PushSubscriptionController;
+use App\Http\Controllers\Admin\ActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -157,6 +158,7 @@ Route::middleware('auth.session')->group(function () {
             Route::patch('{item}', [AdminContentController::class, 'update']);
             Route::delete('{item}', [AdminContentController::class, 'destroy']);
         });
+        Route::get('/activity', [ActivityLogController::class, 'index'])->name('admin.activity');
     });
 
     // ----- Shared daily questions -----

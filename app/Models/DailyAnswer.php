@@ -6,9 +6,14 @@ use App\Enums\Visibility;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Concerns\LogsActivity;
 
 class DailyAnswer extends Model
 {
+    use LogsActivity;
+
+    protected string $activityLabel = 'a daily answer';
+    protected array $activityIgnore = ['question'];
     protected $fillable = ['user_id', 'question_date', 'question', 'answer', 'visibility'];
 
     protected function casts(): array

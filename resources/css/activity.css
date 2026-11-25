@@ -1,0 +1,118 @@
+/* ============ Activity log (admin) ============ */
+.act { display: grid; gap: 1rem; width: 100%; min-width: 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* hero */
+.act-hero {
+    display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center;
+    padding: 1.6rem 2.4rem; border-radius: 28px; border: 1px solid var(--ou-border);
+    background: var(--ou-hero); color: var(--ou-hero-text);
+}
+.act-hero-main { min-width: 0; }
+.act-title { margin: .9rem 0 .15rem; font-size: clamp(2rem, 3.4vw, 2.9rem); font-weight: 700; line-height: 1.1; }
+.act-title span, .act-title em { color: var(--ou-hero-accent); }
+.act-title em { font-style: normal; font-weight: 400; }
+.act-sub { margin: 0; opacity: .8; font-size: 1.05rem; font-weight: 300; }
+.act-stats {
+    display: flex; border-radius: 20px; background: var(--ou-glass);
+    border: 1px solid var(--ou-glass-border); backdrop-filter: blur(8px);
+}
+.act-stats > div { display: flex; flex-direction: column; align-items: center; padding: 1rem 1.8rem; }
+.act-stats > div + div { border-left: 1px solid var(--ou-glass-border); }
+.act-stats strong { font-size: 2.2rem; font-weight: 600; line-height: 1; }
+.act-stats small { margin-top: .3rem; opacity: .85; }
+
+/* filters */
+.act-panel .home-panel-head { border-bottom: 1px solid var(--ou-border); }
+.act-filters {
+    display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr)) auto;
+    gap: .7rem; align-items: center;
+}
+.act-filters input, .act-filters select { width: 100%; min-width: 0; padding: .6rem .9rem; font: inherit; }
+.act-filters input:focus-visible, .act-filters select:focus-visible {
+    outline: 0; border-color: var(--ou-accent); box-shadow: 0 0 0 3px var(--ou-accent-soft);
+}
+.act-filters-btns { display: flex; gap: .5rem; }
+.act-filters-btns .home-btn { padding: .55rem 1.2rem; white-space: nowrap; }
+
+/* list */
+.act-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .75rem; }
+.act-row {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 1rem; align-items: center;
+    padding: .9rem 1.2rem; border-radius: 18px; background: var(--ou-card-2);
+    border: 1px solid var(--ou-border); transition: border-color .15s, transform .15s;
+}
+.act-row:hover { border-color: var(--ou-accent); transform: translateY(-1px); }
+.act-icon {
+    display: grid; place-items: center; flex: none; width: 3rem; height: 3rem; border-radius: 14px;
+    background: var(--ou-card); border: 1px solid var(--ou-border); font-size: 1.4rem;
+}
+.act-body { min-width: 0; display: flex; flex-direction: column; gap: .3rem; }
+.act-top { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
+.act-top strong { font-weight: 500; font-size: 1.02rem; overflow-wrap: anywhere; }
+.act-guest { color: var(--ou-muted); font-style: italic; font-weight: 400; }
+.act-desc { margin: 0; line-height: 1.45; overflow-wrap: anywhere; }
+.act-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.act-chip {
+    padding: .05rem .6rem; border-radius: 999px; font-size: .75rem;
+    background: var(--ou-accent-soft); color: var(--ou-accent); overflow-wrap: anywhere;
+}
+.act-side { display: flex; flex-direction: column; align-items: flex-end; gap: .15rem; text-align: right; white-space: nowrap; }
+.act-side time { font-size: .9rem; }
+.act-side small { color: var(--ou-muted); }
+
+/* badges */
+.act-badge {
+    display: inline-flex; align-items: center; gap: .3rem; padding: .1rem .65rem; border-radius: 999px;
+    font-size: .75rem; white-space: nowrap; background: var(--ou-accent-soft); color: var(--ou-accent);
+}
+.act-badge--login { background: rgba(60, 180, 110, .18); color: #3cb46e; }
+.act-badge--login_failed, .act-badge--deleted { background: rgba(255, 77, 109, .16); color: #ff6b81; }
+.act-badge--created { background: rgba(90, 140, 240, .18); color: #6a9bf5; }
+.act-badge--opened, .act-badge--published { background: rgba(190, 110, 230, .18); color: #c27ae8; }
+.act-badge--logout { background: var(--ou-card); color: var(--ou-muted); }
+
+/* empty + pager */
+.act-empty { display: flex; flex-direction: column; align-items: center; gap: .4rem; padding: 2.2rem 1rem; text-align: center; }
+.act-empty > span { font-size: 2.4rem; }
+.act-empty small { color: var(--ou-muted); }
+.act-pager { display: flex; align-items: center; justify-content: space-between; gap: .8rem; }
+.act-pager a, .act-pager span.btn {
+    display: inline-flex; align-items: center; gap: .3rem; padding: .5rem 1.1rem; border-radius: 999px;
+    border: 1px solid var(--ou-border); background: var(--ou-card-2); color: var(--ou-text);
+    font-size: .9rem; text-decoration: none; transition: border-color .15s, color .15s;
+}
+.act-pager a:hover { border-color: var(--ou-accent); color: var(--ou-accent); }
+.act-pager span.btn { opacity: .4; }
+.act-pager small { color: var(--ou-muted); }
+
+/* ============ Responsive ============ */
+@media (max-width: 1200px) {
+    .act-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .act-filters input[type='search'] { grid-column: 1 / -1; }
+    .act-filters-btns { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+    .act-hero { grid-template-columns: 1fr; padding: 1.5rem; }
+    .act-stats { justify-self: stretch; }
+    .act-stats > div { flex: 1; padding: .9rem 1rem; }
+}
+@media (max-width: 700px) {
+    .act-row { grid-template-columns: auto minmax(0, 1fr); align-items: start; padding: .85rem 1rem; }
+    .act-side {
+        grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: baseline;
+        justify-content: flex-start; gap: .2rem .8rem; text-align: left; white-space: normal;
+        padding-top: .6rem; border-top: 1px solid var(--ou-border);
+    }
+    .act-icon { width: 2.6rem; height: 2.6rem; font-size: 1.2rem; }
+}
+@media (max-width: 560px) {
+    .act-filters { grid-template-columns: 1fr 1fr; }
+    .act-filters select { grid-column: 1 / -1; }
+    .act-filters-btns .home-btn { flex: 1; }
+    .act-panel { padding: 1rem 1.1rem 1.1rem; }
+    .act-stats strong { font-size: 1.8rem; }
+}
+@media (max-width: 380px) {
+    .act-filters { grid-template-columns: 1fr; }
+    .act-hero { padding: 1.2rem; }
+}

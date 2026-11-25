@@ -7,9 +7,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Concerns\LogsActivity;
 
 class TimelineMoment extends Model
 {
+    use LogsActivity;
+    protected string $activityLabel = 'a timeline moment';
+    protected array $activityIgnore = ['opened_at']; // fields that shouldn't count as an update
+
     protected $fillable = ['title', 'story', 'moment_date', 'visibility'];
 
     protected function casts(): array

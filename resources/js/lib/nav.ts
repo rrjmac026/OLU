@@ -1,10 +1,8 @@
 import {
-    Calendar,
     CalendarDays,
     Camera,
     CircleHelp,
     FolderOpen,
-    Gamepad2,
     Gift,
     Heart,
     HeartHandshake,
@@ -18,8 +16,7 @@ import {
     Music,
     NotebookPen,
     Settings,
-    Sprout,
-    Tractor,
+    ScrollText,
     Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -84,6 +81,7 @@ export const settingsNavItem: NavItem = {
 export const adminNavItems: NavItem[] = [
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '/admin/content', label: 'Content', icon: FolderOpen },
+    { href: '/admin/activity', label: 'Activity', icon: ScrollText },
 ];
 
 export const allNavItems: NavItem[] = [...navSections.flatMap((s) => s.items), settingsNavItem];

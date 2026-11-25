@@ -7,9 +7,13 @@ use App\Enums\LetterOccasion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Concerns\LogsActivity;
 
 class Letter extends Model
 {
+    use LogsActivity;
+    protected string $activityLabel = 'a letter';
+    protected array $activityIgnore = ['opened_at']; // fields that shouldn't count as an update
     protected $fillable = [
         'sender_id', 'recipient_id', 'kind', 'occasion',
         'title', 'body', 'unlock_at', 'opened_at',

@@ -8,9 +8,15 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Concerns\LogsActivity;
 
 class CalendarEvent extends Model
 {
+    use LogsActivity;
+
+    protected string $activityLabel = 'a calendar event';
+    protected array $activityIgnore = ['opened_at']; // fields that shouldn't count as an update
+
     protected $fillable = [
         'title', 'notes', 'event_date', 'event_time', 'type', 'repeats_yearly', 'visibility',
     ];

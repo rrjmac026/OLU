@@ -6,6 +6,7 @@ import '../../css/notifications.css';
 import '../../css/responsive.css';
 import '../../css/settings.css';
 import '../../css/admin.css';
+import '../../css/activity.css';
 import { Head, usePage } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
 import { useEffect, useState } from 'react';
