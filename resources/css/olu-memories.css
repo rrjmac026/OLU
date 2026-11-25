@@ -333,7 +333,7 @@
 .mg-paper-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; margin-top: 1.3rem; }
 .mg-paper-actions .home-btn { display: inline-flex; align-items: center; gap: .4rem; }
 .mg { grid-template-columns: minmax(0, 1fr); min-width: 0; max-width: 100%; overflow-x: clip; }
-.mg > * { min-width: 0; }
+.mg-grid > * { min-width: 0; }
 
 /* ---- gallery responsive ---- */
 @media (max-width: 1400px) {
@@ -368,12 +368,13 @@
     .mg-filters { gap: .4rem; }
     .mg-filter { padding: .5rem .9rem; font-size: .85rem; }
     .mg-add { aspect-ratio: auto; min-height: 11rem; }
+    .mg-hero-text { max-width: 100%; }
+    .mg-hero p { font-size: .95rem; }
 }
 @media (max-width: 560px) {
-    .mg-grid { grid-template-columns: 1fr; }
+    .mg-grid { grid-template-columns: minmax(0, 1fr); }
     .mg-empty { grid-column: auto; }
 }
-
 
 /* ==========================================================================
    2. MEMORY VIEW (mv-)
