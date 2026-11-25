@@ -106,6 +106,10 @@ function ChatBody({ meId, partner, channel, messages: initial, hasMore: initialH
     if (!channel) return;
     const ch = getEcho().private(channel);
 
+    ch.subscribed(() => console.log('SUBSCRIBED', channel))
+      .error((e: unknown) => console.log('SUB ERROR', e));
+    ch.listenToAll((name: string, data: unknown) => console.log('EVENT', name, data));
+
     const onEvent = (e: ChatEvent) => {
       if (e.type === 'read') {
         if (e.reader_id !== meId) {
