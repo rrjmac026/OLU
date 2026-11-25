@@ -45,7 +45,7 @@ export function getEcho(): Echo<'reverb'> {
     wsPort: port,
     wssPort: port,
     forceTLS: tls,
-    enabledTransports: tls ? ['wss'] : ['ws'],
+    enabledTransports: ['ws', 'wss'],
     auth: { headers: { 'X-XSRF-TOKEN': xsrfToken() } },
   });
 
