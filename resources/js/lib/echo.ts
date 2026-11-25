@@ -25,6 +25,7 @@ export function getEcho(): Echo<'reverb'> {
   }
 
   window.Pusher = Pusher;
+  (window.Pusher as any).logToConsole = true;
 
   // Dev (npm run dev): connect to whatever address the page was opened from
   // (PC or phone) on Reverb's default port 8080. No .env values involved.
