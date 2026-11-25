@@ -35,6 +35,8 @@ export function getEcho(): Echo<'reverb'> {
   const port = dev ? 8080 : Number(import.meta.env.VITE_REVERB_PORT ?? 443);
   const tls = dev ? false : (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https';
 
+  console.log('ECHO CONFIG', { dev, host, port, tls, key: import.meta.env.VITE_REVERB_APP_KEY });
+
   instance = new Echo({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY ?? 'olu-key',
